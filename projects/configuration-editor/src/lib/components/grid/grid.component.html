@@ -1,0 +1,12 @@
+<svg data-html2canvas-ignore class="grid" width="100%" height="100%">
+  <defs>
+    <pattern id="smallGrid" [attr.width]="10 * scale" [attr.height]="10 * scale" patternUnits="userSpaceOnUse">
+      <path [attr.d]="getPath(10, scale)" fill="none" stroke="rgba(207, 207, 207, 0.5)" stroke-width="1"></path>
+    </pattern>
+    <pattern id="grid" [attr.width]="50 * scale" [attr.height]="50 * scale" patternUnits="userSpaceOnUse">
+      <rect [attr.width]="50 * scale" [attr.height]="50 * scale" fill="url(#smallGrid)"></rect>
+      <path [attr.d]="getPath(50, scale)" fill="none" stroke="rgba(186, 186, 186, 0.8)" stroke-width="1"></path>
+    </pattern>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#grid)"></rect>
+</svg>
