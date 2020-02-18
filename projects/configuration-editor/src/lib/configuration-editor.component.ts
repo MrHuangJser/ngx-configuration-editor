@@ -1,16 +1,22 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, Input, Output, EventEmitter } from '@angular/core';
+import { ViewConfig } from './interface';
 
 @Component({
   selector: 'ce-configuration-editor',
-  template: `
-    <p>
-      configuration-editor works!
-    </p>
-  `,
-  styles: []
+  templateUrl: './configuration-editor.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ConfigurationEditorComponent implements OnInit {
-  constructor() {}
+export class ConfigurationEditorComponent {
+  @Input('ceConfig')
+  set viewConfig(value: ViewConfig) {
+    this._viewConfig = value;
+  }
+  get viewConfig(): ViewConfig {
+    return this._viewConfig;
+  }
+  @Output('ceOnInit') initEmitter = new EventEmitter<any>();
 
-  ngOnInit() {}
+  private _viewConfig: ViewConfig;
+
+  constructor(public cdr: ChangeDetectorRef) {}
 }
