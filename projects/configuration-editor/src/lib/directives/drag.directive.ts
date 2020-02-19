@@ -1,50 +1,52 @@
-import { AfterViewInit, Directive, ElementRef, EventEmitter, Input, NgZone, OnDestroy, Output } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Directive, ElementRef, EventEmitter, HostBinding, Input, NgZone, OnDestroy, Output } from '@angular/core';
 import { fromEvent, Subscription } from 'rxjs';
 import { filter, map, switchMap, takeUntil } from 'rxjs/operators';
+import { keydownEvent$, keyupEvent$, pointermoveEvent$, pointerupEvent$ } from '../utils/event';
 
 @Directive({
-  selector: '[ceCrag]'
+  selector: '[ceDrag]'
 })
 export class DragDirective implements AfterViewInit, OnDestroy {
   @Input() useSpace = false;
-  @Output() movementChange = new EventEmitter<[number, number]>();
-  @Output('dragStart') start = new EventEmitter<PointerEvent>();
-  @Output('dragEnd') end = new EventEmitter<PointerEvent>();
+  @Output('ceDragMoving') movementChange = new EventEmitter<[number, number]>();
+  @Output('ceDragStart') start = new EventEmitter<PointerEvent>();
+  @Output('ceDragEnd') end = new EventEmitter<PointerEvent>();
+  @HostBinding('class.wait-drag') waitDrag = false;
+  @HostBinding('class.in-drag') inDrag = false;
 
-  private sub: Subscription[] = [];
-  private moveEvent = fromEvent<PointerEvent>(window, 'pointermove');
-  private upEvent = fromEvent<PointerEvent>(window, 'pointerup').pipe(filter(e => e.button === 0));
-  private keyDownEvent = fromEvent<KeyboardEvent>(window, 'keydown').pipe(filter(e => e.code === 'Space'));
-  private keyUpEvent = fromEvent<KeyboardEvent>(window, 'keyup').pipe(filter(e => e.code === 'Space'));
+  private sub = new Subscription();
 
   private spaceKey = false;
   private pointerStart: [number, number] | null = null;
 
-  constructor(private eleRef: ElementRef<HTMLElement>, private ngZone: NgZone) {}
+  constructor(private eleRef: ElementRef<HTMLElement>, private ngZone: NgZone, private cdr: ChangeDetectorRef) {}
 
   ngAfterViewInit() {
-    this.sub.push(this.listenKeyEvent());
-    this.sub.push(this.listenMoveEvent());
+    this.sub.add(this.listenKeyEvent());
+    this.sub.add(this.listenMoveEvent());
   }
 
   private listenKeyEvent() {
     return this.ngZone.runOutsideAngular(() =>
-      this.keyDownEvent
+      keydownEvent$
         .pipe(
+          filter(e => e.code === 'Space'),
           switchMap(() => {
             this.ngZone.run(() => {
               this.spaceKey = true;
             });
             if (this.useSpace) {
-              this.eleRef.nativeElement.classList.add('wait-drag');
+              this.waitDrag = true;
+              this.cdr.detectChanges();
             }
-            return this.keyUpEvent;
+            return keyupEvent$.pipe(filter(e => e.code === 'Space'));
           })
         )
         .subscribe(() => {
           this.ngZone.run(() => {
             this.spaceKey = false;
-            this.eleRef.nativeElement.classList.remove('wait-drag');
+            this.waitDrag = false;
+            this.cdr.detectChanges();
           });
         })
     );
@@ -61,7 +63,17 @@ export class DragDirective implements AfterViewInit, OnDestroy {
           filter(() => (this.useSpace ? this.spaceKey : !this.spaceKey)),
           switchMap(startEvent => {
             this.down(startEvent);
-            return this.ngZone.runOutsideAngular(() => this.moveEvent.pipe(takeUntil(this.upEvent.pipe(map(endEvent => this.up(endEvent))))));
+            return this.ngZone.runOutsideAngular(() =>
+              pointermoveEvent$.pipe(
+                filter(() => (this.useSpace ? this.spaceKey : !this.spaceKey)),
+                takeUntil(
+                  pointerupEvent$.pipe(
+                    filter(e => e.button === 0),
+                    map(endEvent => this.up(endEvent))
+                  )
+                )
+              )
+            );
           })
         )
         .subscribe(moveEvent => this.move(moveEvent))
@@ -74,7 +86,8 @@ export class DragDirective implements AfterViewInit, OnDestroy {
     this.start.emit(e);
     this.pointerStart = [e.clientX, e.clientY];
     this.ngZone.run(() => {
-      this.eleRef.nativeElement.classList.add('in-drag');
+      this.inDrag = true;
+      this.cdr.detectChanges();
     });
   }
 
@@ -88,12 +101,12 @@ export class DragDirective implements AfterViewInit, OnDestroy {
     this.end.emit(e);
     this.pointerStart = null;
     this.ngZone.run(() => {
-      this.eleRef.nativeElement.classList.remove('in-drag');
+      this.inDrag = false;
+      this.cdr.detectChanges();
     });
   }
 
   ngOnDestroy() {
-    this.sub.forEach(i => i.unsubscribe());
-    this.sub = [];
+    this.sub.unsubscribe();
   }
 }
