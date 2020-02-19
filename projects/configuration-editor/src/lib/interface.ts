@@ -1,21 +1,3 @@
-export interface ViewConfig {
-  editorTransform: ContainerProps;
-  editorData: ItemFormData[];
-}
-
-export interface ContainerProps {
-  transform: {
-    x: number;
-    y: number;
-    scale?: number;
-  };
-  style?: {
-    width?: number;
-    height?: number;
-    background?: string;
-  };
-}
-
 export interface ItemFormData {
   id?: string;
   name?: string;
