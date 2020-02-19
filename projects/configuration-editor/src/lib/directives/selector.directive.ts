@@ -1,4 +1,4 @@
-import { Directive, ElementRef, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
+import { Directive, ElementRef, EventEmitter, OnDestroy, OnInit, Output, Input } from '@angular/core';
 import { fromEvent, Subscription } from 'rxjs';
 import { map, switchMap, takeUntil, filter } from 'rxjs/operators';
 import { pointermoveEvent$, pointerupEvent$ } from '../utils/event';
@@ -12,6 +12,7 @@ export interface ISelectorMovingState {
   selector: '[ceSelector]'
 })
 export class SelectorDirective implements OnInit, OnDestroy {
+  @Input('ceSelectorDisabled') disabled = false;
   @Output('ceSelectorMoving') moving = new EventEmitter<ISelectorMovingState>();
   @Output('ceSelectorEnd') end = new EventEmitter<void>();
 
@@ -23,6 +24,7 @@ export class SelectorDirective implements OnInit, OnDestroy {
     this.subscription.add(
       fromEvent<PointerEvent>(this.eleRef.nativeElement, 'pointerdown')
         .pipe(
+          filter(() => !this.disabled),
           switchMap(startEv =>
             pointermoveEvent$.pipe(
               map(moveEv => {
