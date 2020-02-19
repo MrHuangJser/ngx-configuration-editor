@@ -1,7 +1,8 @@
-import { action, Store, StoreConfig } from '@datorama/akita';
+import { Store, StoreConfig } from '@datorama/akita';
 import { ItemFormData } from '../interface';
+import { SelectorStore } from './selector.store';
 
-export interface IState {
+export interface IEditorState {
   width: number;
   height: number;
   scale: number;
@@ -11,7 +12,7 @@ export interface IState {
   items: ItemFormData[];
 }
 
-function createInitialState(): IState {
+function createInitialState(): IEditorState {
   return {
     width: 1000,
     height: 800,
@@ -24,23 +25,28 @@ function createInitialState(): IState {
 }
 
 @StoreConfig({ name: 'ce-editor', resettable: true })
-export class EditorStore extends Store<IState> {
-  private stateHistory: { past: IState[]; future: IState[] } = {
+export class EditorStore extends Store<IEditorState> {
+  private stateHistory: { past: IEditorState[]; future: IEditorState[] } = {
     past: [],
     future: []
   };
 
-  constructor() {
+  constructor(private selectorStore: SelectorStore) {
     super(createInitialState());
   }
 
-  akitaPreUpdate(prevState: IState, nextState: IState) {
+  akitaPreUpdate(prevState: IEditorState, nextState: IEditorState) {
     this.stateHistory.past.push(prevState);
     this.stateHistory.future = [];
     return nextState;
   }
 
-  @action('ce-editor:redo')
+  reset() {
+    super.reset();
+    this.selectorStore.reset();
+    this.stateHistory = { past: [], future: [] };
+  }
+
   redo() {
     if (this.stateHistory.future.length) {
       const state = this.stateHistory.future.pop();
@@ -49,7 +55,6 @@ export class EditorStore extends Store<IState> {
     }
   }
 
-  @action('ce-editor:undo')
   undo() {
     if (this.stateHistory.past.length) {
       const state = this.stateHistory.past.pop();

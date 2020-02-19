@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Query } from '@datorama/akita';
-import { EditorStore, IState } from './editor.store';
+import { EditorStore, IEditorState } from './editor.store';
 
 @Injectable()
-export class EditorStoreQuery extends Query<IState> {
+export class EditorStoreQuery extends Query<IEditorState> {
   width$ = this.select('width');
   height$ = this.select('height');
   scale$ = this.select('scale');
