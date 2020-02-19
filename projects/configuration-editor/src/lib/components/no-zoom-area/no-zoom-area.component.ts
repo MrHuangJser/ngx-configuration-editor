@@ -10,8 +10,7 @@ import { EditorStoreQuery } from '../../services/editor-query.service';
 export class NoZoomAreaComponent implements OnDestroy {
   @HostBinding('style.width.px') width: number;
   @HostBinding('style.height.px') height: number;
-  @HostBinding('style.left.px') left: number;
-  @HostBinding('style.top.px') top: number;
+  @HostBinding('style.transform') transform: string;
 
   private subscription = new Subscription();
 
@@ -20,9 +19,7 @@ export class NoZoomAreaComponent implements OnDestroy {
       this.storeQuery.select(['width', 'scale', 'height', 'left', 'top']).subscribe(({ width, height, scale, left, top }) => {
         this.width = width * scale;
         this.height = height * scale;
-        this.left = left;
-        this.top = top;
-        this.cdr.detectChanges();
+        this.transform = `translate3d(${left}px,${top}px,0)`;
       })
     );
   }
