@@ -1,19 +1,33 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, HostBinding } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, HostBinding, OnDestroy } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { EditorStoreQuery } from '../../services/editor-query.service';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 
 @Component({
   selector: '[ce-no-zoom-area]',
   templateUrl: './no-zoom-area.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class NoZoomAreaComponent {
-  @HostBinding('style.width.px') width: Observable<number>;
-  @HostBinding('style.height.px') height: Observable<number>;
+export class NoZoomAreaComponent implements OnDestroy {
+  @HostBinding('style.width.px') width: number;
+  @HostBinding('style.height.px') height: number;
+  @HostBinding('style.left.px') left: number;
+  @HostBinding('style.top.px') top: number;
+
+  private subscription = new Subscription();
 
   constructor(public cdr: ChangeDetectorRef, private storeQuery: EditorStoreQuery) {
-    this.width = this.storeQuery.select(['width', 'scale']).pipe(map(state => state.scale * state.width));
-    this.height = this.storeQuery.select(['height', 'scale']).pipe(map(state => state.scale * state.height));
+    this.subscription.add(
+      this.storeQuery.select(['width', 'scale', 'height', 'left', 'top']).subscribe(({ width, height, scale, left, top }) => {
+        this.width = width * scale;
+        this.height = height * scale;
+        this.left = left;
+        this.top = top;
+        this.cdr.detectChanges();
+      })
+    );
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 }
