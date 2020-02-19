@@ -1,4 +1,13 @@
-<div ceSelector>
+<div
+  class="ce-editor-content"
+  tabindex="0"
+  ceSelector
+  ceDrag
+  [useSpace]="true"
+  (ceDragStart)="setDragStartPoints($event)"
+  (ceDragEnd)="setDragStartPoints(null)"
+  (ceDragMoving)="dragMoving($event)"
+>
   <div ce-no-zoom-area>
     <ce-grid></ce-grid>
   </div>
