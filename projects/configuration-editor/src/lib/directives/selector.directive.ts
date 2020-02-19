@@ -1,6 +1,6 @@
 import { Directive, ElementRef, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { fromEvent, Subscription } from 'rxjs';
-import { map, switchMap, takeUntil } from 'rxjs/operators';
+import { map, switchMap, takeUntil, filter } from 'rxjs/operators';
 import { pointermoveEvent$, pointerupEvent$ } from '../utils/event';
 
 export interface ISelectorState {
@@ -29,7 +29,12 @@ export class SelectorDirective implements OnInit, OnDestroy {
                 [startEv.clientX, startEv.clientY],
                 [moveEv.clientX - startEv.clientX, moveEv.clientY - startEv.clientY]
               ]),
-              takeUntil(pointerupEvent$.pipe(map(() => this.end.emit())))
+              takeUntil(
+                pointerupEvent$.pipe(
+                  filter(e => e.button === 0),
+                  map(() => this.end.emit())
+                )
+              )
             )
           )
         )
