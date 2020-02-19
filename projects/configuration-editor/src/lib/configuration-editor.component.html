@@ -1,14 +1,25 @@
 <div
   class="ce-editor-content"
   tabindex="0"
-  ceSelector
   ceDrag
-  [useSpace]="true"
+  [ceDragUseSpace]="true"
+  (ceDragWaitDrag)="setSelectorDisable(true)"
   (ceDragStart)="setDragStartPoints($event)"
   (ceDragEnd)="setDragStartPoints(null)"
   (ceDragMoving)="dragMoving($event)"
+  ceSelector
+  [ceSelectorDisabled]="selectorDisabled"
+  (ceSelectorMoving)="showSelector($event)"
+  (ceSelectorEnd)="showSelector(null)"
 >
   <div ce-no-zoom-area>
     <ce-grid></ce-grid>
   </div>
+  <div
+    class="ce-editor-selector"
+    [style.left.px]="selectorQuery.left$ | async"
+    [style.top.px]="selectorQuery.top$ | async"
+    [style.width.px]="selectorQuery.width$ | async"
+    [style.height.px]="selectorQuery.height$ | async"
+  ></div>
 </div>

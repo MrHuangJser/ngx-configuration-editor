@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectorRef, Directive, ElementRef, EventEmitter, HostBinding, Input, NgZone, OnDestroy, Output } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Directive, ElementRef, EventEmitter, Input, NgZone, OnDestroy, Output } from '@angular/core';
 import { fromEvent, Subscription } from 'rxjs';
 import { filter, map, switchMap, takeUntil } from 'rxjs/operators';
 import { keydownEvent$, keyupEvent$, pointermoveEvent$, pointerupEvent$ } from '../utils/event';
@@ -7,17 +7,16 @@ import { keydownEvent$, keyupEvent$, pointermoveEvent$, pointerupEvent$ } from '
   selector: '[ceDrag]'
 })
 export class DragDirective implements AfterViewInit, OnDestroy {
-  @Input() useSpace = false;
+  @Input('ceDragDisabled') disabled = false;
+  @Input('ceDragUseSpace') useSpace = false;
+  @Output('ceDragWaitDrag') waitDragEvent = new EventEmitter();
   @Output('ceDragMoving') movementChange = new EventEmitter<[number, number]>();
   @Output('ceDragStart') start = new EventEmitter<PointerEvent>();
-  @Output('ceDragEnd') end = new EventEmitter<PointerEvent>();
-  @HostBinding('class.wait-drag') waitDrag = false;
-  @HostBinding('class.in-drag') inDrag = false;
+  @Output('ceDragEnd') end = new EventEmitter();
 
   private sub = new Subscription();
 
   private spaceKey = false;
-  private pointerStart: [number, number] | null = null;
 
   constructor(private eleRef: ElementRef<HTMLElement>, private ngZone: NgZone, private cdr: ChangeDetectorRef) {}
 
@@ -27,83 +26,56 @@ export class DragDirective implements AfterViewInit, OnDestroy {
   }
 
   private listenKeyEvent() {
-    return this.ngZone.runOutsideAngular(() =>
-      keydownEvent$
-        .pipe(
-          filter(e => e.code === 'Space'),
-          switchMap(() => {
-            this.ngZone.run(() => {
-              this.spaceKey = true;
-            });
-            if (this.useSpace) {
-              this.waitDrag = true;
-              this.cdr.detectChanges();
-            }
-            return keyupEvent$.pipe(filter(e => e.code === 'Space'));
-          })
-        )
-        .subscribe(() => {
+    return keydownEvent$
+      .pipe(
+        filter(e => e.code === 'Space' && !this.disabled),
+        switchMap(() => {
+          this.waitDragEvent.emit();
           this.ngZone.run(() => {
-            this.spaceKey = false;
-            this.waitDrag = false;
-            this.cdr.detectChanges();
+            this.spaceKey = true;
           });
+          if (this.useSpace) {
+            this.eleRef.nativeElement.classList.add('wait-drag');
+            this.cdr.detectChanges();
+          }
+          return keyupEvent$.pipe(filter(e => e.code === 'Space'));
+        }),
+        map(() => {
+          this.spaceKey = false;
+          this.eleRef.nativeElement.classList.remove('wait-drag');
+          this.end.emit();
         })
-    );
+      )
+      .subscribe();
   }
 
   private listenMoveEvent() {
     const eleRef = this.eleRef.nativeElement;
     const pointerDown = fromEvent<PointerEvent>(eleRef, 'pointerdown');
 
-    return this.ngZone.runOutsideAngular(() =>
-      pointerDown
-        .pipe(
-          filter(e => e.button === 0),
-          filter(() => (this.useSpace ? this.spaceKey : !this.spaceKey)),
-          switchMap(startEvent => {
-            this.down(startEvent);
-            return this.ngZone.runOutsideAngular(() =>
-              pointermoveEvent$.pipe(
-                filter(() => (this.useSpace ? this.spaceKey : !this.spaceKey)),
-                takeUntil(
-                  pointerupEvent$.pipe(
-                    filter(e => e.button === 0),
-                    map(endEvent => this.up(endEvent))
-                  )
-                )
+    return pointerDown
+      .pipe(
+        filter(e => e.button === 0 && (this.useSpace ? this.spaceKey : !this.spaceKey) && !this.disabled),
+        switchMap(startEvent => {
+          startEvent.stopPropagation();
+          startEvent.preventDefault();
+          this.start.emit(startEvent);
+          this.eleRef.nativeElement.classList.add('in-drag');
+          return pointermoveEvent$.pipe(
+            filter(() => (this.useSpace ? this.spaceKey : !this.spaceKey)),
+            map(moveEvent => [moveEvent.clientX - startEvent.clientX, moveEvent.clientY - startEvent.clientY]),
+            takeUntil(
+              pointerupEvent$.pipe(
+                filter(e => e.button === 0),
+                map(endEvent => {
+                  this.eleRef.nativeElement.classList.remove('in-drag');
+                })
               )
-            );
-          })
-        )
-        .subscribe(moveEvent => this.move(moveEvent))
-    );
-  }
-
-  private down(e: PointerEvent) {
-    e.stopPropagation();
-    e.preventDefault();
-    this.start.emit(e);
-    this.pointerStart = [e.clientX, e.clientY];
-    this.ngZone.run(() => {
-      this.inDrag = true;
-      this.cdr.detectChanges();
-    });
-  }
-
-  private move(e: PointerEvent) {
-    if (this.pointerStart) {
-      this.movementChange.emit([e.clientX - this.pointerStart[0], e.clientY - this.pointerStart[1]]);
-    }
-  }
-
-  private up(e: PointerEvent) {
-    this.end.emit(e);
-    this.pointerStart = null;
-    this.ngZone.run(() => {
-      this.inDrag = false;
-      this.cdr.detectChanges();
-    });
+            )
+          );
+        })
+      )
+      .subscribe(state => this.movementChange.emit(state as any));
   }
 
   ngOnDestroy() {
