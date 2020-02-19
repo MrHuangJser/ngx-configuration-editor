@@ -3,16 +3,16 @@ import { fromEvent, Subscription } from 'rxjs';
 import { map, switchMap, takeUntil, filter } from 'rxjs/operators';
 import { pointermoveEvent$, pointerupEvent$ } from '../utils/event';
 
-export interface ISelectorState {
-  startPoints: number[];
-  moved: number[];
+export interface ISelectorMovingState {
+  startPoints: [number, number];
+  moved: [number, number];
 }
 
 @Directive({
   selector: '[ceSelector]'
 })
 export class SelectorDirective implements OnInit, OnDestroy {
-  @Output('ceSelectorMoving') moving = new EventEmitter<ISelectorState>();
+  @Output('ceSelectorMoving') moving = new EventEmitter<ISelectorMovingState>();
   @Output('ceSelectorEnd') end = new EventEmitter<void>();
 
   private subscription = new Subscription();
@@ -25,10 +25,14 @@ export class SelectorDirective implements OnInit, OnDestroy {
         .pipe(
           switchMap(startEv =>
             pointermoveEvent$.pipe(
-              map(moveEv => [
-                [startEv.clientX, startEv.clientY],
-                [moveEv.clientX - startEv.clientX, moveEv.clientY - startEv.clientY]
-              ]),
+              map(moveEv => {
+                const mx = moveEv.clientX - startEv.clientX;
+                const my = moveEv.clientY - startEv.clientY;
+                return [
+                  [mx >= 0 ? startEv.clientX : startEv.clientX + mx, my >= 0 ? startEv.clientY : startEv.clientY + my],
+                  [Math.abs(mx), Math.abs(my)]
+                ];
+              }),
               takeUntil(
                 pointerupEvent$.pipe(
                   filter(e => e.button === 0),
@@ -38,7 +42,7 @@ export class SelectorDirective implements OnInit, OnDestroy {
             )
           )
         )
-        .subscribe(([startPoints, moved]) => this.moving.emit({ startPoints, moved }))
+        .subscribe(([startPoints, moved]) => this.moving.emit({ startPoints: startPoints as [number, number], moved: moved as [number, number] }))
     );
   }
 
