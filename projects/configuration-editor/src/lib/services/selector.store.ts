@@ -13,6 +13,9 @@ export interface ISelectorState {
 @Injectable()
 export class SelectorStore extends Store<ISelectorState> {
   constructor() {
-    super({ selected: new Set<string>(), bordered: new Set<string>() }, { name: `ce-editor-selector-${Math.round(Math.random() * 100000)}` });
+    super(
+      { selected: new Set<string>(), bordered: new Set<string>() },
+      { name: `ce-editor-selector-${Math.round(Math.random() * 100000)}`, resettable: true }
+    );
   }
 }
