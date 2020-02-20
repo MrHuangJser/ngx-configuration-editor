@@ -40,20 +40,21 @@ export class BorderAreaComponent implements OnInit, OnDestroy {
           map<any, IBorderState>(() => {
             const { bordered } = this.selectorStore.getValue();
             const { items, width, height } = this.editorStore.getValue();
+            const ids = [...bordered];
             return {
               ...[...bordered].reduce<IBorderState>((obj, id) => {
                 const item = items[id];
                 return {
                   ...obj,
                   [id]: {
-                    left: (item.styleProps.transform.position.x / width) * 100,
-                    top: (item.styleProps.transform.position.y / height) * 100,
-                    width: (item.styleProps.style.width / width) * 100,
-                    height: (item.styleProps.style.height / height) * 100
+                    left: Math.round((item.styleProps.transform.position.x / width) * 10000) / 100,
+                    top: Math.round((item.styleProps.transform.position.y / height) * 10000) / 100,
+                    width: Math.round((item.styleProps.style.width / width) * 10000) / 100,
+                    height: Math.round((item.styleProps.style.height / height) * 10000) / 100
                   }
                 };
               }, {} as IBorderState),
-              total: this.utilsSrv.getItemClientBoxByPercent([...this.selectorStore.getValue().bordered])
+              total: this.utilsSrv.getItemClientBoxByPercent(ids)
             };
           })
         )
