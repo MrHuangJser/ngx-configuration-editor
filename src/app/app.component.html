@@ -1,3 +1,7 @@
 <div [ngStyle]="{ 'width.vw': 80, 'height.vh': 80, margin: '10vh 10vw' }">
-  <ce-configuration-editor></ce-configuration-editor>
+  <ce-configuration-editor [ceConfig]="viewConfig">
+    <ng-template ceItemView>
+      <h2>test</h2>
+    </ng-template>
+  </ce-configuration-editor>
 </div>

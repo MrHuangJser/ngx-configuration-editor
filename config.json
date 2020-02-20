@@ -1,0 +1,139 @@
+{
+  "editorTransform": { "style": { "width": 1628, "height": 780, "background": "" }, "transform": { "x": 20, "y": 20, "scale": 1 } },
+  "editorData": [
+    {
+      "id": "1580797334903_9202348",
+      "name": "开关",
+      "children": null,
+      "widget": {
+        "type": "IMAGE_SWITCH",
+        "props": {
+          "value": {
+            "id": "2c91808870099b85017009eb51090009",
+            "name": "开关",
+            "identifyCode": "风管机.开关",
+            "type": "REAL_TIME",
+            "dataType": "BOOLEAN"
+          },
+          "control": [
+            { "id": "2c91808870099b85017009eb51090009", "name": "开关", "identifyCode": "风管机.开关", "type": "REAL_TIME", "dataType": "BOOLEAN" }
+          ],
+          "active": { "value": "1", "url": "attachment/水滴形开关报警图标scv/statusicon_pulse_text_status_On.svg" },
+          "inactive": { "value": "0", "url": "attachment/水滴形开关报警图标scv/statusIcon_off.svg" }
+        }
+      },
+      "styleProps": {
+        "transform": { "position": { "x": 50.999999999999986, "y": 52.00000000000003 }, "rotate": 0, "scale": 1 },
+        "style": {
+          "borderWidth": 0,
+          "borderType": "dashed",
+          "borderColor": "#333",
+          "backgroundColor": "#ffffff00",
+          "width": 451.74528410060424,
+          "height": 197.68099561131197,
+          "paddingLeft": 0,
+          "paddingBottom": 0,
+          "paddingRight": 0,
+          "paddingTop": 0
+        }
+      },
+      "events": []
+    },
+    {
+      "id": "1580797758646_2262277",
+      "name": "name",
+      "children": null,
+      "widget": {
+        "type": "OUTPUT",
+        "props": {
+          "value": {
+            "id": "2c91808870099b85017009f4c5dd000b",
+            "name": "风力",
+            "identifyCode": "风管机.风力",
+            "type": "REAL_TIME",
+            "dataType": "DOUBLE"
+          },
+          "showUnit": true,
+          "showPointNum": 0,
+          "color": "#333333",
+          "size": 104
+        }
+      },
+      "styleProps": {
+        "transform": { "position": { "x": 502, "y": 317.6573910682775 }, "rotate": 0, "scale": 1 },
+        "style": {
+          "borderWidth": 0,
+          "borderType": "dashed",
+          "borderColor": "#333",
+          "backgroundColor": "#ffffff00",
+          "width": 451.74528410060424,
+          "height": 197.68099561131197,
+          "paddingLeft": 0,
+          "paddingBottom": 0,
+          "paddingRight": 0,
+          "paddingTop": 0
+        }
+      },
+      "events": []
+    },
+    {
+      "id": "1580797813865_4333494",
+      "name": "name",
+      "children": null,
+      "widget": {
+        "type": "OUTPUT",
+        "props": {
+          "value": {
+            "id": "2c91808870099b85017009eb51090009",
+            "name": "开关",
+            "identifyCode": "风管机.开关",
+            "type": "REAL_TIME",
+            "dataType": "BOOLEAN"
+          },
+          "showUnit": false,
+          "showPointNum": 0,
+          "color": "#333333",
+          "size": 104
+        }
+      },
+      "styleProps": {
+        "transform": { "position": { "x": 503, "y": 52 }, "rotate": 0, "scale": 1 },
+        "style": {
+          "borderWidth": 0,
+          "borderType": "dashed",
+          "borderColor": "#333",
+          "backgroundColor": "#ffffff00",
+          "width": 451.74528410060424,
+          "height": 197.68099561131197,
+          "paddingLeft": 0,
+          "paddingBottom": 0,
+          "paddingRight": 0,
+          "paddingTop": 0
+        }
+      },
+      "events": []
+    },
+    {
+      "id": "1580797857174_1180941",
+      "name": "图片",
+      "children": null,
+      "widget": { "type": "IMAGE", "props": { "value": "attachment/空调风门scv/Actuator_Vert_small.svg" } },
+      "styleProps": {
+        "transform": { "position": { "x": 51, "y": 314.97398307768884 }, "rotate": 0, "scale": 1 },
+        "style": {
+          "borderWidth": 0,
+          "borderType": "dashed",
+          "borderColor": "#333",
+          "backgroundColor": "#ffffff00",
+          "width": 451.74528410060424,
+          "height": 197.68099561131197,
+          "paddingLeft": 0,
+          "paddingBottom": 0,
+          "paddingRight": 0,
+          "paddingTop": 0
+        }
+      },
+      "events": []
+    }
+  ]
+}
