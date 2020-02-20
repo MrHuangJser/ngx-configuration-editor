@@ -7822,6 +7822,11 @@ run-queue@^1.0.0, run-queue@^1.0.3:
   dependencies:
     aproba "^1.1.1"
 
+rxjs-compat@^6.5.4:
+  version "6.5.4"
+  resolved "https://registry.npm.taobao.org/rxjs-compat/download/rxjs-compat-6.5.4.tgz#03825692af3fe363e04c43f41ff4113d76bbd305"
+  integrity sha1-A4JWkq8/42PgTEP0H/QRPXa70wU=
+
 rxjs@6.3.3:
   version "6.3.3"
   resolved "https://registry.npm.taobao.org/rxjs/download/rxjs-6.3.3.tgz#3c6a7fa420e844a81390fb1158a9ec614f4bad55"
