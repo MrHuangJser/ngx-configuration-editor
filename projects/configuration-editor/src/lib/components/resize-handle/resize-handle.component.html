@@ -1,4 +1,4 @@
-<div data-html2canvas-ignore class="ce-resize-content">
+<div data-html2canvas-ignore class="ce-resize-content" *ngIf="(selectorQuery.selected$ | async).size">
   <!-- <div
     class="rotate"
     *ngIf="selected.size === 1 && showHandle"
