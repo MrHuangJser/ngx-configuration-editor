@@ -1,0 +1,10 @@
+<div
+  class="ce-zoom-area"
+  [style.width.px]="editorQuery.width$ | async"
+  [style.height.px]="editorQuery.height$ | async"
+  [style.left.px]="editorQuery.left$ | async"
+  [style.top.px]="editorQuery.top$ | async"
+  [style.transform]="'scale(' + (editorQuery.scale$ | async) + ')'"
+>
+  <ng-content></ng-content>
+</div>
