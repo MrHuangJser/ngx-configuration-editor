@@ -12,9 +12,9 @@
   (ceSelectorMoving)="showSelector($event)"
   (ceSelectorEnd)="showSelector(null)"
 >
-  <div ce-no-zoom-area>
+  <ce-no-zoom-area>
     <ce-grid></ce-grid>
-  </div>
+  </ce-no-zoom-area>
   <div
     class="ce-editor-selector"
     [style.left.px]="selectorQuery.left$ | async"

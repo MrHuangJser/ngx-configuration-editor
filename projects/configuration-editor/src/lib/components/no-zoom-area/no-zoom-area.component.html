@@ -1,1 +1,9 @@
-<ng-content></ng-content>
+<div
+  class="ce-no-zoom-area"
+  [style.width.px]="(storeQuery.width$ | async) * (storeQuery.scale$ | async)"
+  [style.height.px]="(storeQuery.height$ | async) * (storeQuery.scale$ | async)"
+  [style.left.px]="storeQuery.left$ | async"
+  [style.top.px]="storeQuery.top$ | async"
+>
+  <ng-content></ng-content>
+</div>
