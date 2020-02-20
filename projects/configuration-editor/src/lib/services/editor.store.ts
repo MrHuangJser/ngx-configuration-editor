@@ -12,7 +12,7 @@ export interface IEditorState {
   left: number;
   top: number;
   background: string | null;
-  items: ItemFormData[];
+  items: { [id: string]: ItemFormData };
 }
 
 function createInitialState(): IEditorState {
@@ -23,7 +23,7 @@ function createInitialState(): IEditorState {
     left: 0,
     top: 0,
     background: null,
-    items: []
+    items: {}
   };
 }
 
