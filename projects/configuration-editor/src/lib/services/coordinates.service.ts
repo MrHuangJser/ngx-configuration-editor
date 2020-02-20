@@ -7,7 +7,7 @@ export class CoordinatesService {
   constructor(private store: EditorStore, private editorSrv: ConfigurationEditorService) {}
 
   private getEditorElement(): HTMLElement {
-    return document.querySelector(`[editor-id=${this.editorSrv.editorId}]`);
+    return document.querySelector(`[editor-id="${this.editorSrv.editorId}"]`);
   }
 
   clientToEditor(x: number, y: number): [number, number] {

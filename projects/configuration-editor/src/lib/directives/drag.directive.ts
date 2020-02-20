@@ -43,7 +43,9 @@ export class DragDirective implements AfterViewInit, OnDestroy {
         map(() => {
           this.spaceKey = false;
           this.eleRef.nativeElement.classList.remove('wait-drag');
-          this.end.emit();
+          if (this.useSpace) {
+            this.end.emit();
+          }
         })
       )
       .subscribe();
@@ -69,6 +71,9 @@ export class DragDirective implements AfterViewInit, OnDestroy {
                 filter(e => e.button === 0),
                 map(endEvent => {
                   this.eleRef.nativeElement.classList.remove('in-drag');
+                  if (!this.useSpace) {
+                    this.end.emit();
+                  }
                 })
               )
             )
