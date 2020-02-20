@@ -50,4 +50,19 @@ export class ConfigurationEditorService {
   showSelector(x: number, y: number, width: number, height: number) {
     this.selectorStore.update({ selectorLeft: x, selectorTop: y, selectorWidth: width, selectorHeight: height });
   }
+
+  @action('ce-editor:toggleBorder')
+  toggleBorder(id: string, flag = true) {
+    this.selectorStore.update(({ bordered }) => {
+      flag ? bordered.add(id) : bordered.delete(id);
+      return { bordered: new Set(bordered) };
+    });
+  }
+
+  @action('ce-editor:toggleBorderBatch')
+  showBorderBatch(ids: string[], flag = true) {
+    this.selectorStore.update(({ bordered }) => {
+      return { bordered: new Set(flag ? [...bordered, ...ids] : [...bordered].filter(id => !ids.includes(id))) };
+    });
+  }
 }
