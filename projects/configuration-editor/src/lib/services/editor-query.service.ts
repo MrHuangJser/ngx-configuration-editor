@@ -6,6 +6,8 @@ import { EditorStore, IEditorState } from './editor.store';
 export class EditorStoreQuery extends Query<IEditorState> {
   width$ = this.select('width');
   height$ = this.select('height');
+  left$ = this.select('left');
+  top$ = this.select('top');
   scale$ = this.select('scale');
   background$ = this.select('background');
   items$ = this.select('items');

@@ -1,4 +1,5 @@
-import { Store, StoreConfig } from '@datorama/akita';
+import { Injectable } from '@angular/core';
+import { Store } from '@datorama/akita';
 
 export interface ISelectorState {
   selected: Set<string>;
@@ -9,9 +10,9 @@ export interface ISelectorState {
   selectorHeight: number;
 }
 
-@StoreConfig({ name: 'ce-editor-selector', resettable: true })
+@Injectable()
 export class SelectorStore extends Store<ISelectorState> {
   constructor() {
-    super({ selected: new Set<string>(), bordered: new Set<string>() });
+    super({ selected: new Set<string>(), bordered: new Set<string>() }, { name: `ce-editor-selector-${Math.round(Math.random() * 100000)}` });
   }
 }

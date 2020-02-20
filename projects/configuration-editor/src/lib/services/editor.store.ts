@@ -1,4 +1,7 @@
-import { Store, StoreConfig } from '@datorama/akita';
+import { Injectable } from '@angular/core';
+import { Store } from '@datorama/akita';
+import { Subject, Subscription } from 'rxjs';
+import { bufferWhen, debounceTime } from 'rxjs/operators';
 import { ItemFormData } from '../interface';
 import { SelectorStore } from './selector.store';
 
@@ -24,21 +27,34 @@ function createInitialState(): IEditorState {
   };
 }
 
-@StoreConfig({ name: 'ce-editor', resettable: true })
+@Injectable()
 export class EditorStore extends Store<IEditorState> {
   private stateHistory: { past: IEditorState[]; future: IEditorState[] } = {
     past: [],
     future: []
   };
+  private stateChange$ = new Subject<IEditorState>();
+  private subscription = new Subscription();
 
   constructor(private selectorStore: SelectorStore) {
-    super(createInitialState());
+    super(createInitialState(), { name: `ce-editor-${Math.round(Math.random() * 100000)}` });
+    this.subscription.add(
+      this.stateChange$.pipe(bufferWhen(() => this.stateChange$.pipe(debounceTime(300)))).subscribe(states => {
+        this.stateHistory.future = [];
+        this.stateHistory.past.push(states.shift());
+      })
+    );
   }
 
   akitaPreUpdate(prevState: IEditorState, nextState: IEditorState) {
-    this.stateHistory.past.push(prevState);
-    this.stateHistory.future = [];
+    this.stateChange$.next(prevState);
     return nextState;
+  }
+
+  destroy() {
+    this.subscription.unsubscribe();
+    this.selectorStore.reset();
+    super.destroy();
   }
 
   reset() {
@@ -50,16 +66,16 @@ export class EditorStore extends Store<IEditorState> {
   redo() {
     if (this.stateHistory.future.length) {
       const state = this.stateHistory.future.pop();
-      this.stateHistory.past.push(state);
-      this._setState(state);
+      this.stateHistory.past.push(this.getValue());
+      this._setState({ ...state }, true);
     }
   }
 
   undo() {
     if (this.stateHistory.past.length) {
       const state = this.stateHistory.past.pop();
-      this.stateHistory.future.push(state);
-      this._setState(state);
+      this.stateHistory.future.push(this.getValue());
+      this._setState({ ...state }, true);
     }
   }
 }
