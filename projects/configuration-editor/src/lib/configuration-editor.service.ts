@@ -55,8 +55,7 @@ export class ConfigurationEditorService {
   toggleBorder(id: string, flag = true) {
     const { bordered } = this.selectorStore.getValue();
     flag ? bordered.add(id) : bordered.delete(id);
-    const newBordered = new Set([...bordered]);
-    this.selectorStore.update({ bordered: newBordered });
+    this.selectorStore.update({ bordered: new Set([...bordered]) });
   }
 
   @action('ce-editor:toggleBorderBatch')
@@ -68,5 +67,23 @@ export class ConfigurationEditorService {
   @action('ce-editor:clearBorder')
   clearBorder() {
     this.selectorStore.update({ bordered: new Set<string>() });
+  }
+
+  @action('ce-editor:toggleSelector')
+  toggleSelector(id: string, flag = true) {
+    const { selected } = this.selectorStore.getValue();
+    flag ? selected.add(id) : selected.delete(id);
+    this.selectorStore.update({ selected: new Set([...selected]) });
+  }
+
+  @action('ce-editor:toggleSelectorBatch')
+  toggleSelectorBatch(ids: string[], flag = true) {
+    const { selected } = this.selectorStore.getValue();
+    this.selectorStore.update({ selected: new Set(flag ? [...selected, ...ids] : [...selected].filter(id => !ids.includes(id))) });
+  }
+
+  @action('ce-editor:clearSelector')
+  clearSelector() {
+    this.selectorStore.update({ selected: new Set<string>() });
   }
 }
