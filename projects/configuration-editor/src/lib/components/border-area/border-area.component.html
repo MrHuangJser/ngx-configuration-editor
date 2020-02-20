@@ -2,7 +2,9 @@
   <div
     class="ce-item-border"
     *ngFor="let item of borderedList; trackBy: item?.id"
-    [style.width.%]="item?.styleProps?.style?.width / (editorQuery.width$ | async)"
-    [style.height.%]="item?.styleProps?.style?.height / (editorQuery.height$ | async)"
+    [style.width.%]="(item?.styleProps?.style?.width / (editorQuery.width$ | async)) * 100"
+    [style.height.%]="(item?.styleProps?.style?.height / (editorQuery.height$ | async)) * 100"
+    [style.left.%]="(item?.styleProps?.transform?.position?.x / (editorQuery.width$ | async)) * 100"
+    [style.top.%]="(item?.styleProps?.transform?.position?.y / (editorQuery.height$ | async)) * 100"
   ></div>
 </div>

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, ChangeDetectorRef } from '@angular/core';
 import { merge, Subscription } from 'rxjs';
 import {} from 'rxjs/observable';
 import { ItemFormData } from '../../interface';
@@ -18,6 +18,7 @@ export class BorderAreaComponent implements OnInit, OnDestroy {
   private subscription = new Subscription();
 
   constructor(
+    private cdr: ChangeDetectorRef,
     public selectorStore: SelectorStore,
     public selectorQuery: SelectorQueryService,
     public editorQuery: EditorStoreQuery,
@@ -30,6 +31,7 @@ export class BorderAreaComponent implements OnInit, OnDestroy {
         const { bordered } = this.selectorStore.getValue();
         const { items } = this.editorStore.getValue();
         this.borderedList = [...bordered].map(id => items[id]);
+        this.cdr.detectChanges();
       })
     );
   }
