@@ -9,7 +9,7 @@ import { SelectorStore } from './services/selector.store';
 export class ConfigurationEditorService {
   public editorId: string;
 
-  constructor(private editorStore: EditorStore, private selectorStore: SelectorStore) {}
+  constructor(public editorStore: EditorStore, public selectorStore: SelectorStore) {}
 
   @action('ce-editor:setStore')
   setStore(state: Partial<IEditorState>) {
