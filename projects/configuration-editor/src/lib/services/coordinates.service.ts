@@ -17,8 +17,8 @@ export class CoordinatesService {
   }
 
   editorToCanvas(x: number, y: number): [number, number] {
-    const { left, top } = this.store.getValue();
-    return [x - left, y - top];
+    const { left, top, scale } = this.store.getValue();
+    return [(x - left) / scale, (y - top) / scale];
   }
 
   clientToCanvas(x: number, y: number) {
