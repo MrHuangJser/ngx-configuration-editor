@@ -1,0 +1,8 @@
+<div class="ce-border-area">
+  <div
+    class="ce-item-border"
+    *ngFor="let item of borderedList; trackBy: item?.id"
+    [style.width.%]="item?.styleProps?.style?.width / (editorQuery.width$ | async)"
+    [style.height.%]="item?.styleProps?.style?.height / (editorQuery.height$ | async)"
+  ></div>
+</div>
