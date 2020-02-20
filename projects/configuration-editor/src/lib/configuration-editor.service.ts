@@ -1,5 +1,5 @@
 import { Injectable, TemplateRef } from '@angular/core';
-import { action } from '@datorama/akita';
+import { action, transaction } from '@datorama/akita';
 import { EditorStore, IEditorState } from './services/editor.store';
 import { SelectorStore } from './services/selector.store';
 
@@ -93,5 +93,29 @@ export class ConfigurationEditorService {
   @action('ce-editor:clearSelector')
   clearSelector() {
     this.selectorStore.update({ selected: new Set<string>() });
+  }
+
+  @action('ce-editor:moveItemBatch')
+  @transaction()
+  moveItemBatch(itemsPositionMap: Map<string, [number, number]>) {
+    itemsPositionMap.forEach(([x, y], id) => {
+      const { items } = this.editorStore.getValue();
+      const item = items[id];
+      this.editorStore.update({
+        items: {
+          ...items,
+          [id]: {
+            ...item,
+            styleProps: {
+              ...item.styleProps,
+              transform: {
+                ...item.styleProps.transform,
+                position: { x, y }
+              }
+            }
+          }
+        }
+      });
+    });
   }
 }
