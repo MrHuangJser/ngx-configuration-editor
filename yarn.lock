@@ -992,6 +992,13 @@
     lodash "^4.17.13"
     to-fast-properties "^2.0.0"
 
+"@datorama/akita-ngdevtools@^3.0.2":
+  version "3.0.2"
+  resolved "https://registry.npm.taobao.org/@datorama/akita-ngdevtools/download/@datorama/akita-ngdevtools-3.0.2.tgz#399e0706b33f56a8efea5501d633f11086dc9618"
+  integrity sha1-OZ4HBrM/Vqjv6lUB1jPxEIbclhg=
+  dependencies:
+    tslib "^1.9.0"
+
 "@datorama/akita@^4.19.2":
   version "4.19.2"
   resolved "https://registry.npm.taobao.org/@datorama/akita/download/@datorama/akita-4.19.2.tgz#0b69aadff32a4a7ee384db7a6777e24168868277"
