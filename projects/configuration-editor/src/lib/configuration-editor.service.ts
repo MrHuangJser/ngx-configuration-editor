@@ -53,16 +53,20 @@ export class ConfigurationEditorService {
 
   @action('ce-editor:toggleBorder')
   toggleBorder(id: string, flag = true) {
-    this.selectorStore.update(({ bordered }) => {
-      flag ? bordered.add(id) : bordered.delete(id);
-      return { bordered: new Set(bordered) };
-    });
+    const { bordered } = this.selectorStore.getValue();
+    flag ? bordered.add(id) : bordered.delete(id);
+    const newBordered = new Set([...bordered]);
+    this.selectorStore.update({ bordered: newBordered });
   }
 
   @action('ce-editor:toggleBorderBatch')
-  showBorderBatch(ids: string[], flag = true) {
-    this.selectorStore.update(({ bordered }) => {
-      return { bordered: new Set(flag ? [...bordered, ...ids] : [...bordered].filter(id => !ids.includes(id))) };
-    });
+  toggleBorderBatch(ids: string[], flag = true) {
+    const { bordered } = this.selectorStore.getValue();
+    this.selectorStore.update({ bordered: new Set(flag ? [...bordered, ...ids] : [...bordered].filter(id => !ids.includes(id))) });
+  }
+
+  @action('ce-editor:clearBorder')
+  clearBorder() {
+    this.selectorStore.update({ bordered: new Set<string>() });
   }
 }
