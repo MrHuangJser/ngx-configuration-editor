@@ -1,75 +1,76 @@
-ce-resize-handle,
-.ce-resize-content {
-  -webkit-user-drag: none;
-  position: absolute;
-  cursor: move;
-  display: inline-block;
-  border: 1px solid #ffaf24;
-  pointer-events: none;
-  .block {
+ce-resize-handle {
+  .ce-resize-content {
     -webkit-user-drag: none;
-    width: 8px;
-    height: 8px;
-    border: 1px solid #ffaf24;
     position: absolute;
-    background: white;
-    border-radius: 100%;
+    cursor: move;
+    display: inline-block;
     pointer-events: auto;
-  }
-  .rotate {
-    position: absolute;
-    top: -40px;
-    left: 50%;
-    transform: translateX(-50%);
-    color: #ffaf24;
-    cursor: grab;
-    font-size: 14px;
-    &:active {
-      cursor: grabbing;
+    box-sizing: border-box;
+    .block {
+      -webkit-user-drag: none;
+      width: 8px;
+      height: 8px;
+      position: absolute;
+      background: white;
+      border-radius: 100%;
+      pointer-events: auto;
+      .ce-item-border;
     }
-  }
-  .n {
-    top: -4px;
-    left: 50%;
-    transform: translate3d(-50%, 0, 0);
-    cursor: n-resize;
-  }
-  .ne {
-    cursor: ne-resize;
-    top: -4px;
-    right: -4px;
-  }
-  .e {
-    cursor: e-resize;
-    top: 50%;
-    transform: translate3d(0, -50%, 0);
-    right: -4px;
-  }
-  .se {
-    cursor: se-resize;
-    bottom: -4px;
-    right: -4px;
-  }
-  .s {
-    cursor: s-resize;
-    bottom: -4px;
-    left: 50%;
-    transform: translate3d(-50%, 0, 0);
-  }
-  .sw {
-    cursor: sw-resize;
-    left: -4px;
-    bottom: -4px;
-  }
-  .w {
-    cursor: w-resize;
-    left: -4px;
-    top: 50%;
-    transform: translate3d(0, -50%, 0);
-  }
-  .nw {
-    cursor: nw-resize;
-    left: -4px;
-    top: -4px;
+    .rotate {
+      position: absolute;
+      top: -40px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: @ce-primary-color;
+      cursor: grab;
+      font-size: 14px;
+      &:active {
+        cursor: grabbing;
+      }
+    }
+    .n {
+      top: -4px;
+      left: 50%;
+      transform: translate3d(-50%, 0, 0);
+      cursor: n-resize;
+    }
+    .ne {
+      cursor: ne-resize;
+      top: -4px;
+      right: -4px;
+    }
+    .e {
+      cursor: e-resize;
+      top: 50%;
+      transform: translate3d(0, -50%, 0);
+      right: -4px;
+    }
+    .se {
+      cursor: se-resize;
+      bottom: -4px;
+      right: -4px;
+    }
+    .s {
+      cursor: s-resize;
+      bottom: -4px;
+      left: 50%;
+      transform: translate3d(-50%, 0, 0);
+    }
+    .sw {
+      cursor: sw-resize;
+      left: -4px;
+      bottom: -4px;
+    }
+    .w {
+      cursor: w-resize;
+      left: -4px;
+      top: 50%;
+      transform: translate3d(0, -50%, 0);
+    }
+    .nw {
+      cursor: nw-resize;
+      left: -4px;
+      top: -4px;
+    }
   }
 }

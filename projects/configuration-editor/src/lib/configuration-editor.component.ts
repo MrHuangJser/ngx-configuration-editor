@@ -10,6 +10,7 @@ import {
   OnInit,
   Output
 } from '@angular/core';
+import { transaction } from '@datorama/akita';
 import { ConfigurationEditorService } from './configuration-editor.service';
 import { ISelectorMovingState } from './directives/selector.directive';
 import { CoordinatesService } from './services/coordinates.service';
@@ -17,12 +18,13 @@ import { EditorStoreQuery } from './services/editor-query.service';
 import { EditorStore, IEditorState } from './services/editor.store';
 import { SelectorQueryService } from './services/selector-query.service';
 import { SelectorStore } from './services/selector.store';
+import { UtilsService } from './services/utils.service';
 
 @Component({
   selector: 'ce-configuration-editor',
   templateUrl: './configuration-editor.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [EditorStoreQuery, EditorStore, CoordinatesService, SelectorStore, SelectorQueryService, ConfigurationEditorService]
+  providers: [EditorStoreQuery, EditorStore, CoordinatesService, SelectorStore, SelectorQueryService, ConfigurationEditorService, UtilsService]
 })
 export class ConfigurationEditorComponent implements OnInit, OnDestroy {
   @Input('ceConfig')
@@ -92,6 +94,13 @@ export class ConfigurationEditorComponent implements OnInit, OnDestroy {
       const wheelDelta = e.wheelDelta / 120 || -e.deltaY / 3;
       this.editorSrv.scaleCanvas(wheelDelta * 0.05, this.coordinatesSrv.clientToEditor(e.clientX, e.clientY));
     }
+  }
+
+  @HostListener('pointerdown')
+  @transaction()
+  clearSelectorState() {
+    this.editorSrv.clearBorder();
+    this.editorSrv.clearSelector();
   }
 
   showSelector(state: ISelectorMovingState | null) {

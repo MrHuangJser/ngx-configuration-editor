@@ -1,4 +1,16 @@
-<div data-html2canvas-ignore class="ce-resize-content" *ngIf="(selectorQuery.selected$ | async).size">
+<div
+  data-html2canvas-ignore
+  class="ce-resize-content"
+  *ngIf="(selectorQuery.selected$ | async).size"
+  [style.left.%]="(select$ | async)?.left"
+  [style.top.%]="(select$ | async)?.top"
+  [style.width.%]="(select$ | async)?.width"
+  [style.height.%]="(select$ | async)?.height"
+  ceDrag
+  (ceDragStart)="setStartSelectState($event)"
+  (ceDragMoving)="moveSelected($event)"
+  (ceDragEnd)="setStartSelectState(null)"
+>
   <!-- <div
     class="rotate"
     *ngIf="selected.size === 1 && showHandle"
@@ -15,12 +27,14 @@
       />
     </svg>
   </div> -->
-  <div class="block n"></div>
-  <div class="block ne"></div>
-  <div class="block e"></div>
-  <div class="block se"></div>
-  <div class="block s"></div>
-  <div class="block sw"></div>
-  <div class="block w"></div>
-  <div class="block nw"></div>
+  <ng-container *ngIf="showResizeHandle">
+    <div ceDrag class="block n"></div>
+    <div ceDrag class="block ne"></div>
+    <div ceDrag class="block e"></div>
+    <div ceDrag class="block se"></div>
+    <div ceDrag class="block s"></div>
+    <div ceDrag class="block sw"></div>
+    <div ceDrag class="block w"></div>
+    <div ceDrag class="block nw"></div>
+  </ng-container>
 </div>

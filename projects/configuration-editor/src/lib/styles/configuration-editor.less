@@ -14,10 +14,8 @@ ce-configuration-editor {
     background-color: #f0f0f0;
     &.wait-drag {
       cursor: grab;
-      ::ng-deep {
-        * {
-          cursor: grab;
-        }
+      * {
+        pointer-events: none;
       }
       &.in-drag {
         cursor: grabbing;

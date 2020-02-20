@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
-import { Query, applyTransaction } from '@datorama/akita';
+import { applyTransaction, Query } from '@datorama/akita';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { ConfigurationEditorService } from '../configuration-editor.service';
-import { rectIsContainerRect } from '../utils/tools';
 import { CoordinatesService } from './coordinates.service';
 import { EditorStore } from './editor.store';
 import { ISelectorState, SelectorStore } from './selector.store';
+import { UtilsService } from './utils.service';
 
 @Injectable()
 export class SelectorQueryService extends Query<ISelectorState> {
@@ -22,7 +22,8 @@ export class SelectorQueryService extends Query<ISelectorState> {
     protected store: SelectorStore,
     private editorSrv: ConfigurationEditorService,
     private editorStore: EditorStore,
-    private coordinatesSrv: CoordinatesService
+    private coordinatesSrv: CoordinatesService,
+    private utilsSrv: UtilsService
   ) {
     super(store);
     this.subscription.add(
@@ -48,7 +49,7 @@ export class SelectorQueryService extends Query<ISelectorState> {
                 w: selectorWidth / scale,
                 h: selectorHeight / scale
               };
-              const flag = rectIsContainerRect(itemRect, selectorRect);
+              const flag = this.utilsSrv.rectIsContainerRect(itemRect, selectorRect);
               applyTransaction(() => {
                 this.editorSrv.toggleBorder(item.id, flag);
                 this.editorSrv.toggleSelector(item.id, flag);
