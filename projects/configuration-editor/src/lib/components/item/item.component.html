@@ -1,0 +1,15 @@
+<div class="ce-item" #ceItem [attr.ce-item-id]="itemData?.id" [ngStyle]="styles" [style.left.%]="left" [style.top.%]="top">
+  <ng-container
+    *ngIf="!itemData.children || !itemData.children.length"
+    [ngTemplateOutlet]="itemTpl"
+    [ngTemplateOutletContext]="{ $implicit: itemData }"
+  ></ng-container>
+  <div class="ce-item-group" *ngIf="itemData.children && item.children.length">
+    <ce-item
+      *ngFor="let item of itemData.children; trackBy: item.id"
+      [ceItemData]="item"
+      [ceItemParentWidth]="itemData?.styleProps?.style?.width"
+      [ceItemParentHeight]="itemData?.styleProps?.style?.height"
+    ></ce-item>
+  </div>
+</div>

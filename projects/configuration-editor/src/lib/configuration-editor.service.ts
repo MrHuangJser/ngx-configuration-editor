@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, TemplateRef } from '@angular/core';
 import { action } from '@datorama/akita';
 import { EditorStore, IEditorState } from './services/editor.store';
 import { SelectorStore } from './services/selector.store';
@@ -8,8 +8,16 @@ import { SelectorStore } from './services/selector.store';
 })
 export class ConfigurationEditorService {
   public editorId: string;
+  private itemViewTpl: TemplateRef<void>;
 
   constructor(public editorStore: EditorStore, public selectorStore: SelectorStore) {}
+
+  getItemViewTpl() {
+    return this.itemViewTpl;
+  }
+  setItemViewTpl(tpl: TemplateRef<void>) {
+    this.itemViewTpl = tpl;
+  }
 
   @action('ce-editor:setStore')
   setStore(state: Partial<IEditorState>) {

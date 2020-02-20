@@ -15,7 +15,14 @@
   <ce-no-zoom-area>
     <ce-grid></ce-grid>
   </ce-no-zoom-area>
-  <ce-zoom-area></ce-zoom-area>
+  <ce-zoom-area>
+    <ce-item
+      *ngFor="let item of editorQuery.items$ | async | keyvalue"
+      [ceItemData]="item.value"
+      [ceItemParentWidth]="editorQuery.width$ | async"
+      [ceItemParentHeight]="editorQuery.height$ | async"
+    ></ce-item>
+  </ce-zoom-area>
   <ce-no-zoom-area>
     <ce-border-area></ce-border-area>
     <ce-resize-handle></ce-resize-handle>
