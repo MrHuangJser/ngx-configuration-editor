@@ -1,6 +1,6 @@
-import { Directive, ElementRef, EventEmitter, OnDestroy, OnInit, Output, Input } from '@angular/core';
+import { Directive, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { fromEvent, Subscription } from 'rxjs';
-import { map, switchMap, takeUntil, filter } from 'rxjs/operators';
+import { filter, map, switchMap, takeUntil } from 'rxjs/operators';
 import { pointermoveEvent$, pointerupEvent$ } from '../utils/event';
 
 export interface ISelectorMovingState {
@@ -13,8 +13,9 @@ export interface ISelectorMovingState {
 })
 export class SelectorDirective implements OnInit, OnDestroy {
   @Input('ceSelectorDisabled') disabled = false;
+  @Output('ceSelectorStart') start = new EventEmitter<PointerEvent>();
   @Output('ceSelectorMoving') moving = new EventEmitter<ISelectorMovingState>();
-  @Output('ceSelectorEnd') end = new EventEmitter<void>();
+  @Output('ceSelectorEnd') end = new EventEmitter<PointerEvent>();
 
   private subscription = new Subscription();
 
@@ -25,8 +26,9 @@ export class SelectorDirective implements OnInit, OnDestroy {
       fromEvent<PointerEvent>(this.eleRef.nativeElement, 'pointerdown')
         .pipe(
           filter(() => !this.disabled),
-          switchMap(startEv =>
-            pointermoveEvent$.pipe(
+          switchMap(startEv => {
+            this.start.emit(startEv);
+            return pointermoveEvent$.pipe(
               map(moveEv => {
                 const mx = moveEv.clientX - startEv.clientX;
                 const my = moveEv.clientY - startEv.clientY;
@@ -38,11 +40,11 @@ export class SelectorDirective implements OnInit, OnDestroy {
               takeUntil(
                 pointerupEvent$.pipe(
                   filter(e => e.button === 0),
-                  map(() => this.end.emit())
+                  map(e => this.end.emit(e))
                 )
               )
-            )
-          )
+            );
+          })
         )
         .subscribe(([startPoints, moved]) => this.moving.emit({ startPoints: startPoints as [number, number], moved: moved as [number, number] }))
     );
