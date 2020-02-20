@@ -16,11 +16,13 @@ import { CoordinatesService } from './services/coordinates.service';
 import { EditorStoreQuery } from './services/editor-query.service';
 import { EditorStore, IEditorState } from './services/editor.store';
 import { SelectorQueryService } from './services/selector-query.service';
+import { SelectorStore } from './services/selector.store';
 
 @Component({
   selector: 'ce-configuration-editor',
   templateUrl: './configuration-editor.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [EditorStoreQuery, EditorStore, CoordinatesService, SelectorStore, SelectorQueryService, ConfigurationEditorService]
 })
 export class ConfigurationEditorComponent implements OnInit, OnDestroy {
   @Input('ceConfig')
@@ -33,7 +35,7 @@ export class ConfigurationEditorComponent implements OnInit, OnDestroy {
   get viewConfig(): Partial<IEditorState> {
     return this._viewConfig;
   }
-  @Output('ceOnInit') initEmitter = new EventEmitter<any>();
+  @Output('ceOnInit') initEmitter = new EventEmitter<ConfigurationEditorService>();
   @HostBinding('attr.editor-id') editorId: string;
   selectorDisabled = false;
 
@@ -50,12 +52,14 @@ export class ConfigurationEditorComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.editorId = this.editorSrv.editorId = `editor_${Date.now()}${Math.round(Math.random() * 100000)}`;
-    this.cdr.detectChanges();
+    this.editorSrv.editorId = `editor_${Date.now()}${Math.round(Math.random() * 100000)}`;
+    this.editorId = this.editorSrv.editorId;
+    this.initEmitter.emit(this.editorSrv);
   }
 
   ngOnDestroy() {
     this.editorSrv.reset();
+    this.store.destroy();
   }
 
   setSelectorDisable(flag: boolean) {
