@@ -10,7 +10,7 @@ import {
   OnInit,
   Output
 } from '@angular/core';
-import { transaction } from '@datorama/akita';
+import { applyTransaction } from '@datorama/akita';
 import { ConfigurationEditorService } from './configuration-editor.service';
 import { ISelectorMovingState } from './directives/selector.directive';
 import { CoordinatesService } from './services/coordinates.service';
@@ -97,10 +97,11 @@ export class ConfigurationEditorComponent implements OnInit, OnDestroy {
   }
 
   @HostListener('pointerdown')
-  @transaction()
   clearSelectorState() {
-    this.editorSrv.clearBorder();
-    this.editorSrv.clearSelector();
+    applyTransaction(() => {
+      this.editorSrv.clearBorder();
+      this.editorSrv.clearSelector();
+    });
   }
 
   showSelector(state: ISelectorMovingState | null) {

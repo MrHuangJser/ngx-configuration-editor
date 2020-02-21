@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { divide, multiply } from 'mathjs';
 import { merge, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { EditorStoreQuery } from '../../services/editor-query.service';
@@ -7,7 +8,6 @@ import { SelectorQueryService } from '../../services/selector-query.service';
 import { SelectorStore } from '../../services/selector.store';
 import { UtilsService } from '../../services/utils.service';
 import { ISelectState } from '../resize-handle/resize-handle.component';
-import { multiply, divide } from 'mathjs';
 
 type BorderStateType = ISelectState & { rotate?: number };
 
@@ -39,9 +39,8 @@ export class BorderAreaComponent implements OnInit, OnDestroy {
       merge(this.editorQuery.items$, this.selectorQuery.bordered$)
         .pipe(
           map<any, IBorderState>(() => {
-            const { bordered } = this.selectorStore.getValue();
+            const { bordered, selected } = this.selectorStore.getValue();
             const { items, width, height } = this.editorStore.getValue();
-            const ids = [...bordered];
             return {
               ...[...bordered].reduce<IBorderState>((obj, id) => {
                 const item = items[id];
@@ -56,7 +55,7 @@ export class BorderAreaComponent implements OnInit, OnDestroy {
                   }
                 };
               }, {} as IBorderState),
-              total: this.utilsSrv.getItemClientBoxByPercent(ids)
+              total: this.utilsSrv.getItemClientBoxByPercent([...selected])
             };
           })
         )

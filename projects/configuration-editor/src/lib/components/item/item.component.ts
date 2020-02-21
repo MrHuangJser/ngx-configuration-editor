@@ -1,7 +1,8 @@
-import { ChangeDetectionStrategy, Component, ElementRef, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, Input, OnInit, TemplateRef, ViewChild, HostBinding, HostListener } from '@angular/core';
 import { ConfigurationEditorService } from '../../configuration-editor.service';
 import { ItemFormData } from '../../interface';
 import { divide, multiply } from 'mathjs';
+import { transaction, applyTransaction } from '@datorama/akita';
 
 const NO_UNIT_PROPERTY = ['zIndex'];
 
@@ -63,5 +64,21 @@ export class ItemComponent implements OnInit {
       }
     }
     return value;
+  }
+
+  @HostListener('pointerenter', ['true'])
+  @HostListener('pointerleave', ['false'])
+  showBorder(flag: boolean) {
+    this.editorSrv.toggleBorder(this._itemData.id, flag);
+  }
+
+  @HostListener('pointerdown', ['$event'])
+  showSelector(event: PointerEvent) {
+    event.stopPropagation();
+    event.preventDefault();
+    applyTransaction(() => {
+      this.editorSrv.toggleSelector(this._itemData.id, true);
+      this.editorSrv.toggleBorder(this._itemData.id, true);
+    });
   }
 }

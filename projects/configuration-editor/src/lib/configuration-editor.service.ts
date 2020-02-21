@@ -1,5 +1,5 @@
 import { Injectable, TemplateRef } from '@angular/core';
-import { action, transaction } from '@datorama/akita';
+import { action, applyTransaction } from '@datorama/akita';
 import { EditorStore, IEditorState } from './services/editor.store';
 import { SelectorStore } from './services/selector.store';
 
@@ -61,8 +61,14 @@ export class ConfigurationEditorService {
 
   @action('ce-editor:toggleBorder')
   toggleBorder(id: string, flag = true) {
-    const { bordered } = this.selectorStore.getValue();
-    flag ? bordered.add(id) : bordered.delete(id);
+    const { bordered, selected } = this.selectorStore.getValue();
+    if (flag) {
+      bordered.add(id);
+    } else {
+      if (!selected.has(id)) {
+        bordered.delete(id);
+      }
+    }
     this.selectorStore.update({ bordered: new Set([...bordered]) });
   }
 
@@ -96,25 +102,26 @@ export class ConfigurationEditorService {
   }
 
   @action('ce-editor:moveItemBatch')
-  @transaction()
   moveItemBatch(itemsPositionMap: Map<string, [number, number]>) {
-    itemsPositionMap.forEach(([x, y], id) => {
-      const { items } = this.editorStore.getValue();
-      const item = items[id];
-      this.editorStore.update({
-        items: {
-          ...items,
-          [id]: {
-            ...item,
-            styleProps: {
-              ...item.styleProps,
-              transform: {
-                ...item.styleProps.transform,
-                position: { x, y }
+    applyTransaction(() => {
+      itemsPositionMap.forEach(([x, y], id) => {
+        const { items } = this.editorStore.getValue();
+        const item = items[id];
+        this.editorStore.update({
+          items: {
+            ...items,
+            [id]: {
+              ...item,
+              styleProps: {
+                ...item.styleProps,
+                transform: {
+                  ...item.styleProps.transform,
+                  position: { x, y }
+                }
               }
             }
           }
-        }
+        });
       });
     });
   }
