@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { applyTransaction, Query } from '@datorama/akita';
+import { divide } from 'mathjs';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { ConfigurationEditorService } from '../configuration-editor.service';
@@ -7,7 +8,6 @@ import { CoordinatesService } from './coordinates.service';
 import { EditorStore } from './editor.store';
 import { ISelectorState, SelectorStore } from './selector.store';
 import { UtilsService } from './utils.service';
-import { divide } from 'mathjs';
 
 @Injectable()
 export class SelectorQueryService extends Query<ISelectorState> {
@@ -38,17 +38,12 @@ export class SelectorQueryService extends Query<ISelectorState> {
             if (items.hasOwnProperty(id)) {
               const [selectorX, selectorY] = this.coordinatesSrv.editorToCanvas(selectorLeft, selectorTop);
               const item = items[id];
-              const itemRect = {
-                x: item.styleProps.transform.position.x,
-                y: item.styleProps.transform.position.y,
-                w: item.styleProps.style.width,
-                h: item.styleProps.style.height
-              };
+              const [itemRect] = this.utilsSrv.getItemRects([id]);
               const selectorRect = {
-                x: selectorX,
-                y: selectorY,
-                w: divide(selectorWidth, scale),
-                h: divide(selectorHeight, scale)
+                left: selectorX,
+                top: selectorY,
+                width: divide(selectorWidth, scale),
+                height: divide(selectorHeight, scale)
               };
               const flag = this.utilsSrv.rectIsContainerRect(itemRect, selectorRect);
               applyTransaction(() => {
