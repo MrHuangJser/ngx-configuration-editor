@@ -50,7 +50,8 @@ export class BorderAreaComponent implements OnInit, OnDestroy {
                     left: Math.round((item.styleProps.transform.position.x / width) * 10000) / 100,
                     top: Math.round((item.styleProps.transform.position.y / height) * 10000) / 100,
                     width: Math.round((item.styleProps.style.width / width) * 10000) / 100,
-                    height: Math.round((item.styleProps.style.height / height) * 10000) / 100
+                    height: Math.round((item.styleProps.style.height / height) * 10000) / 100,
+                    rotate: item.styleProps.transform.rotate
                   }
                 };
               }, {} as IBorderState),

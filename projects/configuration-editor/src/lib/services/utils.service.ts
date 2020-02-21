@@ -28,9 +28,17 @@ export class UtilsService {
   getItemRects(ids: string[]) {
     return ids.map<Partial<DOMRect>>(id => {
       const { scale } = this.editorStore.getValue();
+      const { items } = this.editorStore.getValue();
+      const item = items[id];
+      const isRotate = item.styleProps.transform.rotate;
       const itemRect = document.querySelector(`[ce-item-id="${id}"]`).getBoundingClientRect();
       const [left, top] = this.coordinatesSrv.clientToCanvas(itemRect.left, itemRect.top);
-      return { left, top, width: itemRect.width / scale, height: itemRect.height / scale };
+      return {
+        left: isRotate ? left : item.styleProps.transform.position.x,
+        top: isRotate ? top : item.styleProps.transform.position.y,
+        width: itemRect.width / scale,
+        height: itemRect.height / scale
+      };
     });
   }
 
