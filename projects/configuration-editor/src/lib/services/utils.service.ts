@@ -24,8 +24,12 @@ export class UtilsService {
     const { items } = this.editorStore.getValue();
     return ids.map<Partial<DOMRect>>(id => {
       const item = items[id];
+      const itemDOM = document.querySelector(`[ce-item-id="${id}"]`);
+      if (!item || !itemDOM) {
+        return null;
+      }
+      const itemRect = itemDOM.getBoundingClientRect();
       const isRotate = item.styleProps.transform.rotate;
-      const itemRect = document.querySelector(`[ce-item-id="${id}"]`).getBoundingClientRect();
       const [left, top] = this.coordinatesSrv.clientToCanvas(itemRect.left, itemRect.top);
       return {
         left: isRotate ? left : item.styleProps.transform.position.x,
@@ -38,8 +42,11 @@ export class UtilsService {
 
   getItemsClientBox(ids: string[]) {
     const selectedRects = this.getItemRects(ids);
-    const left = Math.min(...selectedRects.map(rect => rect.left));
-    const top = Math.min(...selectedRects.map(rect => rect.top));
+    const left = Math.min(...selectedRects.map(rect => rect && rect.left));
+    const top = Math.min(...selectedRects.map(rect => rect && rect.top));
+    if (!left || !top) {
+      return null;
+    }
     return {
       left,
       top,
@@ -49,8 +56,12 @@ export class UtilsService {
   }
 
   getItemClientBoxByPercent(ids: string[]) {
+    const itemsClientBox = this.getItemsClientBox(ids);
+    if (!itemsClientBox) {
+      return null;
+    }
+    const { left, top, width, height } = itemsClientBox;
     const { width: canvasWidth, height: canvasHeight } = this.editorStore.getValue();
-    const { left, top, width, height } = this.getItemsClientBox(ids);
     return {
       left: multiply(divide(left, canvasWidth), 100),
       top: multiply(divide(top, canvasHeight), 100),

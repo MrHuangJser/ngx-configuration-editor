@@ -1,18 +1,22 @@
 <div class="ce-border-area" *ngIf="(selectorQuery.bordered$ | async).size">
   <div
     class="ce-border-total"
+    *ngIf="(selectorQuery.selected$ | async).size && borderState.total"
     [style.width.%]="borderState.total?.width"
     [style.height.%]="borderState.total?.height"
     [style.left.%]="borderState.total?.left"
     [style.top.%]="borderState.total?.top"
   ></div>
-  <div
-    class="ce-item-border"
-    *ngFor="let id of selectorQuery.bordered$ | async"
-    [style.width.%]="borderState[id]?.width"
-    [style.height.%]="borderState[id]?.height"
-    [style.left.%]="borderState[id]?.left"
-    [style.top.%]="borderState[id]?.top"
-    [style.transform]="'rotate(' + borderState[id]?.rotate + 'deg)'"
-  ></div>
+  <ng-container *ngFor="let id of selectorQuery.bordered$ | async">
+    <ng-container *ngIf="borderState[id]">
+      <div
+        class="ce-item-border"
+        [style.width.%]="borderState[id]?.width"
+        [style.height.%]="borderState[id]?.height"
+        [style.left.%]="borderState[id]?.left"
+        [style.top.%]="borderState[id]?.top"
+        [style.transform]="'rotate(' + borderState[id]?.rotate + 'deg)'"
+      ></div>
+    </ng-container>
+  </ng-container>
 </div>

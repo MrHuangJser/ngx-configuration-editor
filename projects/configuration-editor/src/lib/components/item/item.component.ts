@@ -77,6 +77,10 @@ export class ItemComponent implements OnInit {
     event.stopPropagation();
     event.preventDefault();
     applyTransaction(() => {
+      if (!event.metaKey) {
+        this.editorSrv.clearBorder();
+        this.editorSrv.clearSelector();
+      }
       this.editorSrv.toggleSelector(this._itemData.id, true);
       this.editorSrv.toggleBorder(this._itemData.id, true);
     });

@@ -12,8 +12,8 @@ import { ISelectState } from '../resize-handle/resize-handle.component';
 type BorderStateType = ISelectState & { rotate?: number };
 
 interface IBorderState {
-  total: BorderStateType;
-  [id: string]: BorderStateType;
+  total: BorderStateType | null;
+  [id: string]: BorderStateType | null;
 }
 
 @Component({
@@ -46,7 +46,7 @@ export class BorderAreaComponent implements OnInit, OnDestroy {
                 const item = items[id];
                 return {
                   ...obj,
-                  [id]: {
+                  [id]: item && {
                     left: multiply(divide(item.styleProps.transform.position.x, width), 100),
                     top: multiply(divide(item.styleProps.transform.position.y, height), 100),
                     width: multiply(divide(item.styleProps.style.width, width), 100),

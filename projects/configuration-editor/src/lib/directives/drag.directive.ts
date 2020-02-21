@@ -26,10 +26,12 @@ export class DragDirective implements AfterViewInit, OnDestroy {
   }
 
   private listenKeyEvent() {
-    return keydownEvent$
+    return fromEvent<KeyboardEvent>(this.eleRef.nativeElement, 'keydown')
       .pipe(
         filter(e => e.code === 'Space' && !this.disabled),
-        switchMap(() => {
+        switchMap(e => {
+          e.stopPropagation();
+          e.preventDefault();
           this.waitDragEvent.emit();
           this.ngZone.run(() => {
             this.spaceKey = true;

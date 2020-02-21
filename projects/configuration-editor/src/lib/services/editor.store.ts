@@ -41,7 +41,7 @@ export class EditorStore extends Store<IEditorState> {
     this.subscription.add(
       this.stateChange$.pipe(bufferWhen(() => this.stateChange$.pipe(debounceTime(300)))).subscribe(states => {
         this.stateHistory.future = [];
-        this.stateHistory.past.push(states.shift());
+        this.stateHistory.past.push({ ...states.shift() });
       })
     );
   }
