@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { multiply, divide } from 'mathjs';
 import { CoordinatesService } from './coordinates.service';
 import { EditorStore } from './editor.store';
 import { SelectorStore } from './selector.store';
@@ -36,8 +37,8 @@ export class UtilsService {
       return {
         left: isRotate ? left : item.styleProps.transform.position.x,
         top: isRotate ? top : item.styleProps.transform.position.y,
-        width: itemRect.width / scale,
-        height: itemRect.height / scale
+        width: divide(itemRect.width, scale),
+        height: divide(itemRect.height, scale)
       };
     });
   }
@@ -58,10 +59,10 @@ export class UtilsService {
     const { width: canvasWidth, height: canvasHeight } = this.editorStore.getValue();
     const { left, top, width, height } = this.getItemsClientBox(ids);
     return {
-      left: (left / canvasWidth) * 100,
-      top: (top / canvasHeight) * 100,
-      width: (width / canvasWidth) * 100,
-      height: (height / canvasHeight) * 100
+      left: multiply(divide(left, canvasWidth), 100),
+      top: multiply(divide(top, canvasHeight), 100),
+      width: multiply(divide(width, canvasWidth), 100),
+      height: multiply(divide(height, canvasHeight), 100)
     };
   }
 }

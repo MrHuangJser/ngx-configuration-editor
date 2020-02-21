@@ -7,6 +7,7 @@ import { SelectorQueryService } from '../../services/selector-query.service';
 import { SelectorStore } from '../../services/selector.store';
 import { UtilsService } from '../../services/utils.service';
 import { ISelectState } from '../resize-handle/resize-handle.component';
+import { multiply, divide } from 'mathjs';
 
 type BorderStateType = ISelectState & { rotate?: number };
 
@@ -47,10 +48,10 @@ export class BorderAreaComponent implements OnInit, OnDestroy {
                 return {
                   ...obj,
                   [id]: {
-                    left: Math.round((item.styleProps.transform.position.x / width) * 10000) / 100,
-                    top: Math.round((item.styleProps.transform.position.y / height) * 10000) / 100,
-                    width: Math.round((item.styleProps.style.width / width) * 10000) / 100,
-                    height: Math.round((item.styleProps.style.height / height) * 10000) / 100,
+                    left: multiply(divide(item.styleProps.transform.position.x, width), 100),
+                    top: multiply(divide(item.styleProps.transform.position.y, height), 100),
+                    width: multiply(divide(item.styleProps.style.width, width), 100),
+                    height: multiply(divide(item.styleProps.style.height, height), 100),
                     rotate: item.styleProps.transform.rotate
                   }
                 };
