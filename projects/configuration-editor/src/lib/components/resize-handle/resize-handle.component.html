@@ -28,13 +28,61 @@
     </svg>
   </div> -->
   <ng-container *ngIf="showResizeHandle">
-    <div class="block n" ceDrag (ceDragStart)="setStartSelectState($event)" (ceDragEnd)="setStartSelectState(null)"></div>
-    <div class="block ne" ceDrag (ceDragStart)="setStartSelectState($event)" (ceDragEnd)="setStartSelectState(null)"></div>
-    <div class="block e" ceDrag (ceDragStart)="setStartSelectState($event)" (ceDragEnd)="setStartSelectState(null)"></div>
-    <div class="block se" ceDrag (ceDragStart)="setStartSelectState($event)" (ceDragEnd)="setStartSelectState(null)"></div>
-    <div class="block s" ceDrag (ceDragStart)="setStartSelectState($event)" (ceDragEnd)="setStartSelectState(null)"></div>
-    <div class="block sw" ceDrag (ceDragStart)="setStartSelectState($event)" (ceDragEnd)="setStartSelectState(null)"></div>
-    <div class="block w" ceDrag (ceDragStart)="setStartSelectState($event)" (ceDragEnd)="setStartSelectState(null)"></div>
-    <div class="block nw" ceDrag (ceDragStart)="setStartSelectState($event)" (ceDragEnd)="setStartSelectState(null)"></div>
+    <div
+      class="block n"
+      ceDrag
+      (ceDragStart)="setStartSelectState($event)"
+      (ceDragEnd)="setStartSelectState(null)"
+      (ceDragMoving)="multipleDirectionResize(['n'], $event)"
+    ></div>
+    <div
+      class="block ne"
+      ceDrag
+      (ceDragStart)="setStartSelectState($event)"
+      (ceDragEnd)="setStartSelectState(null)"
+      (ceDragMoving)="multipleDirectionResize(['n', 'e'], $event)"
+    ></div>
+    <div
+      class="block e"
+      ceDrag
+      (ceDragStart)="setStartSelectState($event)"
+      (ceDragEnd)="setStartSelectState(null)"
+      (ceDragMoving)="multipleDirectionResize(['e'], $event)"
+    ></div>
+    <div
+      class="block se"
+      ceDrag
+      (ceDragStart)="setStartSelectState($event)"
+      (ceDragEnd)="setStartSelectState(null)"
+      (ceDragMoving)="multipleDirectionResize(['s', 'e'], $event)"
+    ></div>
+    <div
+      class="block s"
+      ceDrag
+      (ceDragStart)="setStartSelectState($event)"
+      (ceDragEnd)="setStartSelectState(null)"
+      (ceDragMoving)="multipleDirectionResize(['s'], $event)"
+    ></div>
+    <div
+      class="block sw"
+      ceDrag
+      (ceDragStart)="setStartSelectState($event)"
+      (ceDragEnd)="setStartSelectState(null)"
+      (ceDragMoving)="multipleDirectionResize(['s', 'w'], $event)"
+    ></div>
+    <div
+      class="block w"
+      ceDrag
+      (ceDragStart)="setStartSelectState($event)"
+      (ceDragEnd)="setStartSelectState(null)"
+      (ceDragMoving)="multipleDirectionResize(['w'], $event)"
+    ></div>
+    <div
+      class="block nw"
+      ceDrag
+      (ceDragStart)="setStartSelectState($event)"
+      (ceDragEnd)="setStartSelectState(null)"
+      (ceDragMoving)="multipleDirectionResize(['n', 'w'], $event)"
+    ></div>
   </ng-container>
 </div>

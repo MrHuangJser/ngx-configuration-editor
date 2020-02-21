@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { divide, multiply } from 'mathjs';
+import { applyTransaction } from '@datorama/akita';
+import { divide, subtract } from 'mathjs';
 import { BehaviorSubject, merge, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ConfigurationEditorService } from '../../configuration-editor.service';
@@ -9,7 +10,7 @@ import { SelectorQueryService } from '../../services/selector-query.service';
 import { SelectorStore } from '../../services/selector.store';
 import { UtilsService } from '../../services/utils.service';
 
-type BaseDirection = 'n' | 's' | 'w' | 'e';
+export type BaseDirection = 'n' | 's' | 'w' | 'e';
 
 export interface ISelectState {
   left: number;
@@ -18,7 +19,7 @@ export interface ISelectState {
   height: number;
 }
 
-interface ISelectedItemPercentState {
+export interface ISelectedItemPercentState {
   leftPercent: number;
   topPercent: number;
   widthPercent: number;
@@ -35,6 +36,7 @@ export class ResizeHandleComponent implements OnInit {
   showResizeHandle = true;
 
   private startSelectItemState: Map<string, ISelectState & ISelectedItemPercentState> | null = null;
+  private startSelectorState: ISelectState | null = null;
   private subscription = new Subscription();
   constructor(
     public selectorQuery: SelectorQueryService,
@@ -66,7 +68,9 @@ export class ResizeHandleComponent implements OnInit {
   setStartSelectState(event: PointerEvent | null) {
     if (event) {
       const { selected } = this.selectorStore.getValue();
-      const { width, height } = this.utilsSrv.getItemsClientBox([...selected]);
+      const ids = [...selected];
+      this.startSelectorState = { ...this.utilsSrv.getItemsClientBox(ids) };
+      const { width, height, left, top } = this.startSelectorState;
       this.startSelectItemState = new Map<string, ISelectState & ISelectedItemPercentState>(
         this.getSelectedItems().map(item => {
           const itemState: ISelectState = {
@@ -76,16 +80,17 @@ export class ResizeHandleComponent implements OnInit {
             height: item.styleProps.style.height
           };
           const itemPercentState: ISelectedItemPercentState = {
-            leftPercent: multiply(divide(itemState.left, width), 100),
-            topPercent: multiply(divide(itemState.top, height), 100),
-            widthPercent: multiply(divide(itemState.width, width), 100),
-            heightPercent: multiply(divide(itemState.height, height), 100)
+            leftPercent: selected.size === 1 ? 0 : (divide(subtract(itemState.left, left), width) as number),
+            topPercent: selected.size === 1 ? 0 : (divide(subtract(itemState.top, top), height) as number),
+            widthPercent: selected.size === 1 ? 1 : divide(itemState.width, width),
+            heightPercent: selected.size === 1 ? 1 : divide(itemState.height, height)
           };
           return [item.id, { ...itemState, ...itemPercentState }];
         })
       );
     } else {
       this.startSelectItemState = null;
+      this.startSelectorState = null;
     }
   }
 
@@ -100,17 +105,14 @@ export class ResizeHandleComponent implements OnInit {
     this.editorSrv.updateItemBatch(itemStateMap);
   }
 
-  baseDirectionResize(direction: BaseDirection, [mx, my]: [number, number]) {
-    const {} = this.startSelectItemState;
-    switch (direction) {
-      case 'e':
-        break;
-      case 'n':
-        break;
-      case 's':
-        break;
-      case 'w':
-        break;
-    }
+  multipleDirectionResize(directions: BaseDirection[], [mx, my]: [number, number]) {
+    applyTransaction(() => {
+      const { scale } = this.editorStore.getValue();
+      directions.forEach(direction => {
+        this.editorSrv.updateItemBatch(
+          this.utilsSrv.baseDirectionResize(direction, [mx / scale, my / scale], this.startSelectorState, this.startSelectItemState)
+        );
+      });
+    });
   }
 }

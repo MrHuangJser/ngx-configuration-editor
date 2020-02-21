@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
-import { divide, multiply } from 'mathjs';
+import { add, divide, multiply, subtract } from 'mathjs';
+import { BaseDirection, ISelectedItemPercentState, ISelectState } from '../components/resize-handle/resize-handle.component';
+import { ItemFormData } from '../interface';
 import { CoordinatesService } from './coordinates.service';
 import { EditorStore } from './editor.store';
-import { SelectorStore } from './selector.store';
 
 @Injectable()
 export class UtilsService {
-  constructor(private coordinatesSrv: CoordinatesService, private editorStore: EditorStore, private selectorStore: SelectorStore) {}
+  constructor(private coordinatesSrv: CoordinatesService, private editorStore: EditorStore) {}
 
   pointIsInRect(point: [number, number], rect: Partial<DOMRect>) {
     const { left, top, width, height } = rect;
@@ -68,5 +69,105 @@ export class UtilsService {
       width: multiply(divide(width, canvasWidth), 100),
       height: multiply(divide(height, canvasHeight), 100)
     };
+  }
+
+  baseDirectionResize(
+    direction: BaseDirection,
+    [mx, my]: [number, number],
+    startSelectorState: ISelectState,
+    startSelectItemState: Map<string, ISelectState & ISelectedItemPercentState>
+  ) {
+    const { items } = this.editorStore.getValue();
+    const itemStateMap = new Map<string, ItemFormData>();
+    const { left, top, width, height } = startSelectorState;
+    startSelectItemState.forEach((state, id) => {
+      const item = items[id];
+      const { leftPercent, topPercent, widthPercent, heightPercent } = state;
+      let newSelectorHeight: any;
+      let newSelectorWidth: any;
+      switch (direction) {
+        case 'e':
+          newSelectorWidth = add(width, mx);
+          itemStateMap.set(id, {
+            ...item,
+            styleProps: {
+              ...item.styleProps,
+              style: {
+                ...item.styleProps.style,
+                width: multiply(widthPercent, newSelectorWidth)
+              },
+              transform: {
+                ...item.styleProps.transform,
+                position: {
+                  ...item.styleProps.transform.position,
+                  x: add(multiply(newSelectorWidth, leftPercent), left)
+                }
+              }
+            }
+          } as ItemFormData);
+          break;
+        case 'n':
+          newSelectorHeight = subtract(height, my);
+          itemStateMap.set(id, {
+            ...item,
+            styleProps: {
+              ...item.styleProps,
+              style: {
+                ...item.styleProps.style,
+                height: multiply(heightPercent, newSelectorHeight)
+              },
+              transform: {
+                ...item.styleProps.transform,
+                position: {
+                  ...item.styleProps.transform.position,
+                  y: add(add(multiply(newSelectorHeight, topPercent), top), my)
+                }
+              }
+            }
+          } as ItemFormData);
+          break;
+        case 's':
+          newSelectorHeight = add(height, my);
+          itemStateMap.set(id, {
+            ...item,
+            styleProps: {
+              ...item.styleProps,
+              style: {
+                ...item.styleProps.style,
+                height: multiply(heightPercent, newSelectorHeight)
+              },
+              transform: {
+                ...item.styleProps.transform,
+                position: {
+                  ...item.styleProps.transform.position,
+                  y: add(multiply(newSelectorHeight, topPercent), top)
+                }
+              }
+            }
+          } as ItemFormData);
+          break;
+        case 'w':
+          newSelectorWidth = subtract(width, mx);
+          itemStateMap.set(id, {
+            ...item,
+            styleProps: {
+              ...item.styleProps,
+              style: {
+                ...item.styleProps.style,
+                width: multiply(widthPercent, newSelectorWidth)
+              },
+              transform: {
+                ...item.styleProps.transform,
+                position: {
+                  ...item.styleProps.transform.position,
+                  x: add(add(multiply(newSelectorWidth, leftPercent), left), mx)
+                }
+              }
+            }
+          } as ItemFormData);
+          break;
+      }
+    });
+    return itemStateMap;
   }
 }
