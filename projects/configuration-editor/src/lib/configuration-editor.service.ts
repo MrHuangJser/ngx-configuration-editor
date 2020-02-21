@@ -1,5 +1,6 @@
 import { Injectable, TemplateRef } from '@angular/core';
-import { action, applyTransaction } from '@datorama/akita';
+import { action } from '@datorama/akita';
+import { ItemFormData } from './interface';
 import { EditorStore, IEditorState } from './services/editor.store';
 import { SelectorStore } from './services/selector.store';
 
@@ -101,28 +102,14 @@ export class ConfigurationEditorService {
     this.selectorStore.update({ selected: new Set<string>() });
   }
 
-  @action('ce-editor:moveItemBatch')
-  moveItemBatch(itemsPositionMap: Map<string, [number, number]>) {
-    applyTransaction(() => {
-      itemsPositionMap.forEach(([x, y], id) => {
-        const { items } = this.editorStore.getValue();
-        const item = items[id];
-        this.editorStore.update({
-          items: {
-            ...items,
-            [id]: {
-              ...item,
-              styleProps: {
-                ...item.styleProps,
-                transform: {
-                  ...item.styleProps.transform,
-                  position: { x, y }
-                }
-              }
-            }
-          }
-        });
-      });
+  @action('ce-editor:updateItemBatch')
+  updateItemBatch(itemsStateMap: Map<string, ItemFormData>) {
+    const { items } = this.editorStore.getValue();
+    const batchItems: { [id: string]: ItemFormData } = {};
+    itemsStateMap.forEach((state, id) => {
+      const item = items[id];
+      batchItems[id] = { ...item, ...state };
     });
+    this.editorStore.update({ items: { ...items, ...batchItems } });
   }
 }
