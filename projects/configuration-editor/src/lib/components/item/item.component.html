@@ -5,11 +5,12 @@
     [ngTemplateOutletContext]="{ $implicit: itemData }"
   ></ng-container>
   <div class="ce-item-group" *ngIf="itemData.children && itemData.children.length">
-    <ce-item
-      *ngFor="let item of itemData.children; trackBy: item.id"
-      [ceItemData]="item"
-      [ceItemParentWidth]="itemData?.styleProps?.style?.width"
-      [ceItemParentHeight]="itemData?.styleProps?.style?.height"
-    ></ce-item>
+    <ng-container *ngFor="let data of itemData.children">
+      <ce-item
+        [ceItemData]="data"
+        [ceItemParentWidth]="itemData?.styleProps?.style?.width"
+        [ceItemParentHeight]="itemData?.styleProps?.style?.height"
+      ></ce-item>
+    </ng-container>
   </div>
 </div>
