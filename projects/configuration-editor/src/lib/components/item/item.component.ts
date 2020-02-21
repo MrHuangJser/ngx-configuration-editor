@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, ElementRef, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { ConfigurationEditorService } from '../../configuration-editor.service';
 import { ItemFormData } from '../../interface';
+import { divide, multiply } from 'mathjs';
 
 const NO_UNIT_PROPERTY = ['zIndex'];
 
@@ -24,10 +25,10 @@ export class ItemComponent implements OnInit {
   @ViewChild('ceItem', { static: false, read: ElementRef }) itemEle: ElementRef<HTMLDivElement>;
   styles: { [klass: string]: any } = {};
   get left(): number {
-    return this._itemData ? (this._itemData.styleProps.transform.position.x / this.parentWidth) * 100 : 0;
+    return this._itemData ? multiply(divide(this._itemData.styleProps.transform.position.x, this.parentWidth), 100) : 0;
   }
   get top(): number {
-    return this._itemData ? (this._itemData.styleProps.transform.position.y / this.parentHeight) * 100 : 0;
+    return this._itemData ? multiply(divide(this._itemData.styleProps.transform.position.y, this.parentHeight), 100) : 0;
   }
 
   private _itemData: ItemFormData;

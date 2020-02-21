@@ -7,6 +7,7 @@ import { CoordinatesService } from './coordinates.service';
 import { EditorStore } from './editor.store';
 import { ISelectorState, SelectorStore } from './selector.store';
 import { UtilsService } from './utils.service';
+import { divide } from 'mathjs';
 
 @Injectable()
 export class SelectorQueryService extends Query<ISelectorState> {
@@ -46,8 +47,8 @@ export class SelectorQueryService extends Query<ISelectorState> {
               const selectorRect = {
                 x: selectorX,
                 y: selectorY,
-                w: selectorWidth / scale,
-                h: selectorHeight / scale
+                w: divide(selectorWidth, scale),
+                h: divide(selectorHeight, scale)
               };
               const flag = this.utilsSrv.rectIsContainerRect(itemRect, selectorRect);
               applyTransaction(() => {
