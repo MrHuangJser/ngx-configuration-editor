@@ -2,19 +2,12 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnIni
 import { divide, multiply } from 'mathjs';
 import { merge, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { IBorderState } from '../../interface';
 import { EditorStoreQuery } from '../../services/editor-query.service';
 import { EditorStore } from '../../services/editor.store';
 import { SelectorQueryService } from '../../services/selector-query.service';
 import { SelectorStore } from '../../services/selector.store';
 import { UtilsService } from '../../services/utils.service';
-import { ISelectState } from '../resize-handle/resize-handle.component';
-
-type BorderStateType = ISelectState & { rotate?: number };
-
-interface IBorderState {
-  total: BorderStateType | null;
-  [id: string]: BorderStateType | null;
-}
 
 @Component({
   selector: 'ce-border-area',

@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { add, divide, multiply, subtract } from 'mathjs';
-import { BaseDirection, ISelectedItemPercentState, ISelectState } from '../components/resize-handle/resize-handle.component';
-import { ItemFormData } from '../interface';
+import { BaseDirection, ISelectedItemPercentState, ISelectState } from '../interface';
 import { CoordinatesService } from './coordinates.service';
 import { EditorStore } from './editor.store';
 
@@ -78,7 +77,7 @@ export class UtilsService {
     startSelectItemState: Map<string, ISelectState & ISelectedItemPercentState>
   ) {
     const { items } = this.editorStore.getValue();
-    const itemStateMap = new Map<string, ItemFormData>();
+    const itemStateMap = {};
     const { left, top, width, height } = startSelectorState;
     startSelectItemState.forEach((state, id) => {
       const item = items[id];
@@ -88,7 +87,7 @@ export class UtilsService {
       switch (direction) {
         case 'e':
           newSelectorWidth = add(width, mx);
-          itemStateMap.set(id, {
+          itemStateMap[id] = {
             ...item,
             styleProps: {
               ...item.styleProps,
@@ -104,11 +103,11 @@ export class UtilsService {
                 }
               }
             }
-          } as ItemFormData);
+          };
           break;
         case 'n':
           newSelectorHeight = subtract(height, my);
-          itemStateMap.set(id, {
+          itemStateMap[id] = {
             ...item,
             styleProps: {
               ...item.styleProps,
@@ -124,11 +123,11 @@ export class UtilsService {
                 }
               }
             }
-          } as ItemFormData);
+          };
           break;
         case 's':
           newSelectorHeight = add(height, my);
-          itemStateMap.set(id, {
+          itemStateMap[id] = {
             ...item,
             styleProps: {
               ...item.styleProps,
@@ -144,11 +143,11 @@ export class UtilsService {
                 }
               }
             }
-          } as ItemFormData);
+          };
           break;
         case 'w':
           newSelectorWidth = subtract(width, mx);
-          itemStateMap.set(id, {
+          itemStateMap[id] = {
             ...item,
             styleProps: {
               ...item.styleProps,
@@ -164,7 +163,7 @@ export class UtilsService {
                 }
               }
             }
-          } as ItemFormData);
+          };
           break;
       }
     });

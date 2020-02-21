@@ -81,3 +81,26 @@ export enum EventType {
   MOUSE_LEAVE = 'MOUSE_LEAVE',
   DOUBLE_CLICK = 'DOUBLE_CLICK'
 }
+
+export type BaseDirection = 'n' | 's' | 'w' | 'e';
+
+export interface ISelectState {
+  left: number;
+  top: number;
+  width: number;
+  height: number;
+}
+
+export interface ISelectedItemPercentState {
+  leftPercent: number;
+  topPercent: number;
+  widthPercent: number;
+  heightPercent: number;
+}
+
+export type BorderStateType = ISelectState & { rotate?: number };
+
+export interface IBorderState {
+  total: BorderStateType | null;
+  [id: string]: BorderStateType | null;
+}

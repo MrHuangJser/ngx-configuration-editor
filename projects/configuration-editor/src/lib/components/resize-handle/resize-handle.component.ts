@@ -4,27 +4,11 @@ import { divide, subtract } from 'mathjs';
 import { BehaviorSubject, merge, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ConfigurationEditorService } from '../../configuration-editor.service';
-import { ItemFormData } from '../../interface';
+import { BaseDirection, ISelectedItemPercentState, ISelectState } from '../../interface';
 import { EditorStoreQuery } from '../../services/editor-query.service';
 import { SelectorQueryService } from '../../services/selector-query.service';
 import { SelectorStore } from '../../services/selector.store';
 import { UtilsService } from '../../services/utils.service';
-
-export type BaseDirection = 'n' | 's' | 'w' | 'e';
-
-export interface ISelectState {
-  left: number;
-  top: number;
-  width: number;
-  height: number;
-}
-
-export interface ISelectedItemPercentState {
-  leftPercent: number;
-  topPercent: number;
-  widthPercent: number;
-  heightPercent: number;
-}
 
 @Component({
   selector: 'ce-resize-handle',
@@ -96,11 +80,11 @@ export class ResizeHandleComponent implements OnInit {
 
   moveSelected([mx, my]: [number, number]) {
     const { scale, items } = this.editorStore.getValue();
-    const itemStateMap = new Map<string, ItemFormData>();
+    const itemStateMap = {};
     this.startSelectItemState.forEach(({ left, top }, id) => {
       const item = items[id];
       const [x, y] = [left + mx / scale, top + my / scale];
-      itemStateMap.set(id, { ...item, styleProps: { ...item.styleProps, transform: { ...item.styleProps.transform, position: { x, y } } } });
+      itemStateMap[id] = { ...item, styleProps: { ...item.styleProps, transform: { ...item.styleProps.transform, position: { x, y } } } };
     });
     this.editorSrv.updateItemBatch(itemStateMap);
   }

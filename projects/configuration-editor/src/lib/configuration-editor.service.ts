@@ -8,7 +8,7 @@ import { SelectorStore } from './services/selector.store';
   providedIn: 'root'
 })
 export class ConfigurationEditorService {
-  public editorId: string;
+  editorId: string;
   private itemViewTpl: TemplateRef<void>;
 
   constructor(public editorStore: EditorStore, public selectorStore: SelectorStore) {}
@@ -103,13 +103,8 @@ export class ConfigurationEditorService {
   }
 
   @action('ce-editor:updateItemBatch')
-  updateItemBatch(itemsStateMap: Map<string, ItemFormData>) {
+  updateItemBatch(itemsStateMap: { [id: string]: ItemFormData }) {
     const { items } = this.editorStore.getValue();
-    const batchItems: { [id: string]: ItemFormData } = {};
-    itemsStateMap.forEach((state, id) => {
-      const item = items[id];
-      batchItems[id] = { ...item, ...state };
-    });
-    this.editorStore.update({ items: { ...items, ...batchItems } });
+    this.editorStore.update({ items: { ...items, ...itemsStateMap } });
   }
 }

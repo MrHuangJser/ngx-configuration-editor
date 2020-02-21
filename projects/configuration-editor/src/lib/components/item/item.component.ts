@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, Component, ElementRef, Input, OnInit, TemplateRef, ViewChild, HostBinding, HostListener } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, HostListener, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { applyTransaction } from '@datorama/akita';
+import { divide, multiply } from 'mathjs';
 import { ConfigurationEditorService } from '../../configuration-editor.service';
 import { ItemFormData } from '../../interface';
-import { divide, multiply } from 'mathjs';
-import { transaction, applyTransaction } from '@datorama/akita';
 
 const NO_UNIT_PROPERTY = ['zIndex'];
 
