@@ -21,6 +21,7 @@
     "@angular/router": "~8.2.11",
     "@datorama/akita": "^4.19.2",
     "@delon/form": "^8.8.0",
+    "mathjs": "^6.6.0",
     "rxjs": "~6.4.0",
     "tslib": "^1.10.0",
     "zone.js": "~0.9.1"
@@ -34,6 +35,7 @@
     "@datorama/akita-ngdevtools": "^3.0.2",
     "@types/jasmine": "~3.3.8",
     "@types/jasminewd2": "~2.0.3",
+    "@types/mathjs": "^6.0.4",
     "@types/node": "~8.9.4",
     "codelyzer": "^5.0.0",
     "gulp": "^4.0.2",

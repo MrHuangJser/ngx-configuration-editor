@@ -4,6 +4,7 @@
   "peerDependencies": {
     "@angular/common": "^8.2.14",
     "@angular/core": "^8.2.14",
-    "@datorama/akita": "^4.19.2"
+    "@datorama/akita": "^4.19.2",
+    "mathjs": "^6.6.0"
   }
 }
