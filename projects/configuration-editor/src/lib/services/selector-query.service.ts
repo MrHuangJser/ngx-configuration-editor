@@ -36,26 +36,23 @@ export class SelectorQueryService extends Query<ISelectorState> {
         )
         .subscribe(({ selectorHeight, selectorLeft, selectorTop, selectorWidth }) => {
           const { items, scale } = this.editorStore.getValue();
-          for (const id in items) {
-            if (items.hasOwnProperty(id)) {
-              const item = items[id];
-              if (!item.locked) {
-                const [selectorX, selectorY] = this.coordinatesSrv.editorToCanvas(selectorLeft, selectorTop);
-                const [itemRect] = this.utilsSrv.getItemRects([id]);
-                const selectorRect = {
-                  left: selectorX,
-                  top: selectorY,
-                  width: divide(selectorWidth, scale),
-                  height: divide(selectorHeight, scale)
-                };
-                const flag = this.utilsSrv.rectIsContainerRect(itemRect, selectorRect);
-                applyTransaction(() => {
-                  this.editorSrv.toggleBorder(item.id, flag);
-                  this.editorSrv.toggleSelector(item.id, flag);
-                });
-              }
+          Object.values(items).forEach(item => {
+            if (!item.locked) {
+              const [selectorX, selectorY] = this.coordinatesSrv.editorToCanvas(selectorLeft, selectorTop);
+              const [itemRect] = this.utilsSrv.getItemRects([item.id]);
+              const selectorRect = {
+                left: selectorX,
+                top: selectorY,
+                width: divide(selectorWidth, scale),
+                height: divide(selectorHeight, scale)
+              };
+              const flag = this.utilsSrv.rectIsContainerRect(itemRect, selectorRect);
+              applyTransaction(() => {
+                this.editorSrv.toggleBorder(item.id, flag);
+                this.editorSrv.toggleSelector(item.id, flag);
+              });
             }
-          }
+          });
         })
     );
   }

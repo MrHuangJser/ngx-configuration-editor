@@ -287,9 +287,8 @@ export class UtilsService {
 
   convertItemsToPercent(items: { [id: string]: ItemFormData }, width: number, height: number): { [id: string]: ItemFormData } {
     const newItems: { [id: string]: ItemFormData } = {};
-    Object.keys(items).forEach(id => {
-      const item = items[id];
-      newItems[id] = { ...this.setItemPercent(item, width, height) };
+    Object.values(items).forEach(item => {
+      newItems[item.id] = { ...this.setItemPercent(item, width, height) };
     });
     return newItems;
   }

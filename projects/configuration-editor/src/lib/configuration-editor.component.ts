@@ -63,7 +63,7 @@ export class ConfigurationEditorComponent implements OnInit, OnDestroy {
     private store: EditorStore,
     private coordinatesSrv: CoordinatesService
   ) {
-    this.items$ = this.editorQuery.items$.pipe(map(items => Object.keys(items).map(id => items[id])));
+    this.items$ = this.editorQuery.items$.pipe(map(items => Object.values(items)));
   }
 
   ngOnInit() {

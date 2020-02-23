@@ -42,15 +42,13 @@ export class ItemComponent implements OnInit {
 
   private setStyles() {
     if (this._itemData) {
-      const styles: { [key: string]: any } = {};
-      for (const styleName in this._itemData.styleProps.style) {
-        if (this._itemData.styleProps.style.hasOwnProperty(styleName) && !EXCLUDE_PROPERTY.includes(styleName)) {
-          const styleValue = this._itemData.styleProps.style[styleName];
-          styles[this.convertCSSPropertyName(styleName)] = this.convertStyleValue(styleName, styleValue);
-        }
-      }
-      styles.transform = `rotate(${this._itemData.styleProps.transform.rotate}deg)`;
-      this.styles = styles;
+      const { style } = this._itemData.styleProps;
+      this.styles = {
+        ...Object.keys(style)
+          .filter(styleName => !EXCLUDE_PROPERTY.includes(styleName))
+          .reduce((obj, name) => ({ ...obj, [this.convertCSSPropertyName(name)]: this.convertStyleValue(name, style[name]) }), {}),
+        transform: `rotate(${this._itemData.styleProps.transform.rotate}deg)`
+      };
     }
   }
 

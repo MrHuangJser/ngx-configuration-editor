@@ -1,6 +1,6 @@
 import { Injectable, TemplateRef } from '@angular/core';
 import { action } from '@datorama/akita';
-import { divide, multiply, subtract, add } from 'mathjs';
+import { add, divide, multiply, subtract } from 'mathjs';
 import { Subject } from 'rxjs';
 import { AlignDirection, EditorEventsType, ItemFormData } from './interface';
 import { EditorStore, IEditorState } from './services/editor.store';
@@ -117,25 +117,23 @@ export class ConfigurationEditorService {
       const { items, width, height } = this.editorStore.getValue();
       const itemsStateMap = this.utilsSrv.getAlignMoveStateFromDirection(direction, ids);
       const batchItems: { [id: string]: ItemFormData } = {};
-      for (const id in itemsStateMap) {
-        if (itemsStateMap.hasOwnProperty(id)) {
-          const state = itemsStateMap[id];
-          const item = items[id];
-          batchItems[id] = {
-            ...item,
-            styleProps: {
-              ...item.styleProps,
-              transform: {
-                ...item.styleProps.transform,
-                position: {
-                  x: state.x ? multiply(divide(state.x, width), 100) : item.styleProps.transform.position.x,
-                  y: state.y ? multiply(divide(state.y, height), 100) : item.styleProps.transform.position.y
-                }
+      Object.keys(itemsStateMap).forEach(id => {
+        const state = itemsStateMap[id];
+        const item = items[id];
+        batchItems[id] = {
+          ...item,
+          styleProps: {
+            ...item.styleProps,
+            transform: {
+              ...item.styleProps.transform,
+              position: {
+                x: state.x ? multiply(divide(state.x, width), 100) : item.styleProps.transform.position.x,
+                y: state.y ? multiply(divide(state.y, height), 100) : item.styleProps.transform.position.y
               }
             }
-          };
-        }
-      }
+          }
+        };
+      });
       this.editorStore.update({ items: { ...items, ...batchItems } });
     }
   }
@@ -183,15 +181,14 @@ export class ConfigurationEditorService {
           } as ItemFormData;
         })
       };
-      const newItems: { [id: string]: ItemFormData } = {};
-      for (const id in items) {
-        if (items.hasOwnProperty(id)) {
-          if (!ids.includes(id)) {
-            newItems[id] = { ...items[id] };
-          }
+      this.editorStore.update({
+        items: {
+          [newItem.id]: newItem,
+          ...Object.keys(items)
+            .filter(id => !ids.includes(id))
+            .reduce((obj, id) => ({ ...obj, [id]: items[id] }), {})
         }
-      }
-      this.editorStore.update({ items: { ...newItems, [newItem.id]: newItem } });
+      });
       this.selectorStore.update({ bordered: new Set([newItem.id]), selected: new Set([newItem.id]) });
     }
   }
@@ -250,5 +247,15 @@ export class ConfigurationEditorService {
         selected: new Set(Object.keys(newItems))
       });
     }
+  }
+
+  @action('ce-editor:deleteItems')
+  deleteItems(ids: string[]) {
+    const { items } = this.editorStore.getValue();
+    return this.editorStore.update({
+      items: Object.keys(items)
+        .filter(id => !ids.includes(id))
+        .reduce((obj, id) => ({ ...obj, [id]: { ...items[id] } }), {})
+    });
   }
 }
