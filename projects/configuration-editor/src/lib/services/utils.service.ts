@@ -35,8 +35,8 @@ export class UtilsService {
       return {
         left: isRotate ? left : multiply(divide(item.styleProps.transform.position.x, 100), width),
         top: isRotate ? top : multiply(divide(item.styleProps.transform.position.y, 100), height),
-        width: divide(itemRect.width, scale),
-        height: divide(itemRect.height, scale)
+        width: isRotate ? divide(itemRect.width, scale) : (item.styleProps.style.width / 100) * width,
+        height: isRotate ? divide(itemRect.height, scale) : (item.styleProps.style.height / 100) * height
       };
     });
   }
