@@ -104,3 +104,5 @@ export interface IBorderState {
   total: BorderStateType | null;
   [id: string]: BorderStateType | null;
 }
+
+export type AlignDirection = 'left' | 'top' | 'right' | 'bottom' | 'horizontal' | 'vertical' | 'distribute-horizontal' | 'distribute-vertical';
