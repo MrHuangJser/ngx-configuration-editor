@@ -1,7 +1,8 @@
 import { Injectable, TemplateRef } from '@angular/core';
 import { action } from '@datorama/akita';
+import { divide, multiply, subtract } from 'mathjs';
 import { Subject } from 'rxjs';
-import { AlignDirection, ItemFormData, EditorEventsType } from './interface';
+import { AlignDirection, EditorEventsType, ItemFormData } from './interface';
 import { EditorStore, IEditorState } from './services/editor.store';
 import { SelectorStore } from './services/selector.store';
 import { UtilsService } from './services/utils.service';
@@ -24,7 +25,7 @@ export class ConfigurationEditorService {
 
   @action('ce-editor:setStore')
   setStore(state: Partial<IEditorState>) {
-    this.editorStore.update({ ...state });
+    this.editorStore.update({ ...state, items: this.utilsSrv.convertItemsToPercent(state.items, state.width, state.height) });
   }
 
   @action('ce-editor:reset')
@@ -137,5 +138,59 @@ export class ConfigurationEditorService {
       }
       this.editorStore.update({ items: { ...items, ...batchItems } });
     }
+  }
+
+  @action('ce-editor:groupItems')
+  groupItems(ids: string[]) {
+    const { items } = this.editorStore.getValue();
+    const itemsClientBoxPercent = this.utilsSrv.getItemClientBoxByPercent(ids);
+    const newItem: ItemFormData = {
+      id: `${Date.now()}_${Math.round(Math.random() * 1000000)}`,
+      usePercent: true,
+      styleProps: {
+        style: { width: itemsClientBoxPercent.width, height: itemsClientBoxPercent.height, zIndex: Object.keys(items).length - ids.length },
+        transform: { position: { x: itemsClientBoxPercent.left, y: itemsClientBoxPercent.top }, scale: 1, rotate: 0 }
+      },
+      children: ids.map((id, index) => {
+        const item = items[id];
+        const {
+          styleProps: {
+            style,
+            transform: {
+              position: { x, y }
+            }
+          }
+        } = item;
+        return {
+          ...item,
+          styleProps: {
+            ...item.styleProps,
+            style: {
+              ...style,
+              zIndex: index + 1,
+              width: multiply(divide(style.width, itemsClientBoxPercent.width), 100),
+              height: multiply(divide(style.height, itemsClientBoxPercent.height), 100)
+            },
+            transform: {
+              ...item.styleProps.transform,
+              position: {
+                x: multiply(divide(subtract(x, itemsClientBoxPercent.left), itemsClientBoxPercent.width), 100),
+                y: multiply(divide(subtract(y, itemsClientBoxPercent.top), itemsClientBoxPercent.height), 100)
+              }
+            }
+          }
+        } as ItemFormData;
+      })
+    };
+    const newItems: { [id: string]: ItemFormData } = {};
+    for (const id in items) {
+      if (items.hasOwnProperty(id)) {
+        if (!ids.includes(id)) {
+          newItems[id] = { ...items[id] };
+        }
+      }
+    }
+    this.editorStore.update({ items: { ...newItems, [newItem.id]: newItem } });
+    this.selectorStore.update({ bordered: new Set([newItem.id]), selected: new Set([newItem.id]) });
   }
 }

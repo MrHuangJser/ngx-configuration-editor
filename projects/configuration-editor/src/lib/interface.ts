@@ -2,6 +2,7 @@ export interface ItemFormData {
   id?: string;
   name?: string;
   locked?: boolean;
+  usePercent?: boolean;
   data?: any;
   widget?: ItemWidget;
   styleProps?: ItemStyleProps;

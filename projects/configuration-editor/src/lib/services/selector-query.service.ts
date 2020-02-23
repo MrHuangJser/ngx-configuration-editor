@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { applyTransaction, Query } from '@datorama/akita';
-import { divide, subtract } from 'mathjs';
+import { divide, multiply, subtract } from 'mathjs';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { ConfigurationEditorService } from '../configuration-editor.service';
@@ -69,17 +69,19 @@ export class SelectorQueryService extends Query<ISelectorState> {
   }
 
   setStartSelectState(event: PointerEvent | null) {
-    applyTransaction(() => {
-      if (event) {
-        const { selected } = this.store.getValue();
-        const ids = [...selected];
-
-        const startSelectorState = { ...this.utilsSrv.getItemsClientBox(ids) };
-        this.store.update({ startSelectorState });
-        const { width, height, left, top } = startSelectorState;
-        this.store.update({
-          startSelectItemState: new Map<string, ISelectState & ISelectedItemPercentState>(
-            this.getSelectedItems().map(item => {
+    if (event) {
+      const { selected } = this.store.getValue();
+      const ids = [...selected];
+      const startSelectorState = { ...this.utilsSrv.getItemClientBoxByPercent(ids) };
+      const { width, height, left, top } = startSelectorState;
+      this.store.update({
+        startSelectorState,
+        startSelectItemState: new Map<string, ISelectState & ISelectedItemPercentState>(
+          this.getSelectedItems()
+            .map<any>(item => {
+              if (!item) {
+                return null;
+              }
               const itemState: ISelectState = {
                 left: item.styleProps.transform.position.x,
                 top: item.styleProps.transform.position.y,
@@ -94,21 +96,21 @@ export class SelectorQueryService extends Query<ISelectorState> {
               };
               return [item.id, { ...itemState, ...itemPercentState }];
             })
-          )
-        });
-      } else {
-        this.store.update({ startSelectItemState: null, startSelectorState: null });
-      }
-    });
+            .filter(item => !!item)
+        )
+      });
+    } else {
+      this.store.update({ startSelectItemState: null, startSelectorState: null });
+    }
   }
 
   moveSelected([mx, my]: [number, number]) {
-    const { scale, items } = this.editorStore.getValue();
+    const { scale, items, width, height } = this.editorStore.getValue();
     const { startSelectItemState } = this.store.getValue();
     const itemStateMap = {};
     startSelectItemState.forEach(({ left, top }, id) => {
       const item = items[id];
-      const [x, y] = [left + mx / scale, top + my / scale];
+      const [x, y] = [left + multiply(divide(divide(mx, scale), width), 100), top + multiply(divide(divide(my, scale), height), 100)];
       itemStateMap[id] = { ...item, styleProps: { ...item.styleProps, transform: { ...item.styleProps.transform, position: { x, y } } } };
     });
     this.editorSrv.updateItemBatch(itemStateMap);

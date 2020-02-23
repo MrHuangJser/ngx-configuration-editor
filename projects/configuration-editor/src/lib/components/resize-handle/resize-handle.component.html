@@ -1,7 +1,7 @@
 <div
   data-html2canvas-ignore
   class="ce-resize-content"
-  *ngIf="(selectorQuery.selected$ | async).size && (select$ | async)"
+  *ngIf="(selectorQuery.selected$ | async).size"
   [style.left.%]="(select$ | async)?.left"
   [style.top.%]="(select$ | async)?.top"
   [style.width.%]="(select$ | async)?.width"
@@ -23,7 +23,7 @@
       />
     </svg>
   </div> -->
-  <ng-container *ngIf="selectorQuery.showResizeHandle$ | async">
+  <ng-container *ngIf="resizeHandleVisible$ | async">
     <div
       class="block n"
       ceDrag

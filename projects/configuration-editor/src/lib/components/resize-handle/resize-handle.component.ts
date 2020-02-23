@@ -1,7 +1,8 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { applyTransaction } from '@datorama/akita';
-import { BehaviorSubject, merge, Subscription } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { divide, multiply } from 'mathjs';
+import { interval, merge, Observable, of } from 'rxjs';
+import { delay, filter, map, switchMap, takeUntil } from 'rxjs/operators';
 import { ConfigurationEditorService } from '../../configuration-editor.service';
 import { BaseDirection, ISelectState } from '../../interface';
 import { EditorStoreQuery } from '../../services/editor-query.service';
@@ -14,10 +15,10 @@ import { UtilsService } from '../../services/utils.service';
   templateUrl: './resize-handle.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ResizeHandleComponent implements OnInit {
-  select$: BehaviorSubject<ISelectState | null> = new BehaviorSubject<ISelectState | null>(null);
+export class ResizeHandleComponent {
+  select$: Observable<ISelectState>;
+  resizeHandleVisible$: Observable<boolean>;
 
-  private subscription = new Subscription();
   constructor(
     public selectorQuery: SelectorQueryService,
     public selectorStore: SelectorStore,
@@ -25,13 +26,24 @@ export class ResizeHandleComponent implements OnInit {
     public editorStore: EditorStoreQuery,
     private editorSrv: ConfigurationEditorService,
     private utilsSrv: UtilsService
-  ) {}
-
-  ngOnInit() {
-    this.subscription.add(
-      merge(this.selectorQuery.selected$, this.editorQuery.items$)
-        .pipe(map(() => this.calculateSelector()))
-        .subscribe(state => this.select$.next(state))
+  ) {
+    this.resizeHandleVisible$ = merge(this.selectorQuery.showResizeHandle$, this.selectorQuery.selected$).pipe(
+      map(() => this.selectorStore.getValue().showResizeHandle)
+    );
+    this.select$ = merge(this.selectorQuery.selected$, this.editorQuery.items$).pipe(
+      map(() => this.calculateSelector()),
+      switchMap(state => {
+        const { selected } = this.selectorStore.getValue();
+        if (!state && selected.size) {
+          const intervalCalculate$ = interval(100).pipe(
+            filter(i => !!i),
+            map(() => this.calculateSelector()),
+            filter(s => !!s)
+          );
+          return intervalCalculate$.pipe(takeUntil(intervalCalculate$.pipe(delay(100))));
+        }
+        return of(state);
+      })
     );
   }
 
@@ -41,11 +53,16 @@ export class ResizeHandleComponent implements OnInit {
 
   multipleDirectionResize(directions: BaseDirection[], [mx, my]: [number, number]) {
     applyTransaction(() => {
-      const { scale } = this.editorStore.getValue();
+      const { scale, width, height } = this.editorStore.getValue();
       const { startSelectItemState, startSelectorState } = this.selectorStore.getValue();
       directions.forEach(direction => {
         this.editorSrv.updateItemBatch(
-          this.utilsSrv.baseDirectionResize(direction, [mx / scale, my / scale], startSelectorState, startSelectItemState)
+          this.utilsSrv.baseDirectionResize(
+            direction,
+            [multiply(divide(divide(mx, scale), width), 100), multiply(divide(divide(my, scale), height), 100)],
+            startSelectorState,
+            startSelectItemState
+          )
         );
       });
     });

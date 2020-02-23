@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, Component, ElementRef, HostListener, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { divide, multiply } from 'mathjs';
 import { ConfigurationEditorService } from '../../configuration-editor.service';
 import { ItemFormData } from '../../interface';
 import { SelectorQueryService } from '../../services/selector-query.service';
-import { UtilsService } from '../../services/utils.service';
 import { SelectorStore } from '../../services/selector.store';
+import { UtilsService } from '../../services/utils.service';
 
 const NO_UNIT_PROPERTY = ['zIndex'];
+const EXCLUDE_PROPERTY = ['width', 'height'];
 
 @Component({
   selector: 'ce-item',
@@ -27,12 +27,6 @@ export class ItemComponent implements OnInit {
   @Input('ceItemParentHeight') parentHeight: number;
   @ViewChild('ceItem', { static: false, read: ElementRef }) itemEle: ElementRef<HTMLDivElement>;
   styles: { [klass: string]: any } = {};
-  get left(): number {
-    return this._itemData ? multiply(divide(this._itemData.styleProps.transform.position.x, this.parentWidth), 100) : 0;
-  }
-  get top(): number {
-    return this._itemData ? multiply(divide(this._itemData.styleProps.transform.position.y, this.parentHeight), 100) : 0;
-  }
 
   private _itemData: ItemFormData;
   constructor(
@@ -50,7 +44,7 @@ export class ItemComponent implements OnInit {
     if (this._itemData) {
       const styles: { [key: string]: any } = {};
       for (const styleName in this._itemData.styleProps.style) {
-        if (this._itemData.styleProps.style.hasOwnProperty(styleName)) {
+        if (this._itemData.styleProps.style.hasOwnProperty(styleName) && !EXCLUDE_PROPERTY.includes(styleName)) {
           const styleValue = this._itemData.styleProps.style[styleName];
           styles[this.convertCSSPropertyName(styleName)] = this.convertStyleValue(styleName, styleValue);
         }

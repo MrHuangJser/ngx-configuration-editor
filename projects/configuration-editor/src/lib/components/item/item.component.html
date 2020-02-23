@@ -3,8 +3,10 @@
   #ceItem
   [attr.ce-item-id]="itemData?.id"
   [ngStyle]="styles"
-  [style.left.%]="left"
-  [style.top.%]="top"
+  [style.width.%]="itemData?.styleProps?.style?.width"
+  [style.height.%]="itemData?.styleProps?.style?.height"
+  [style.left.%]="itemData?.styleProps?.transform?.position.x"
+  [style.top.%]="itemData?.styleProps?.transform?.position.y"
   ceDrag
   (ceDragStart)="setDragStart($event)"
   (ceDragMoving)="selectorQuery.moveSelected($event)"

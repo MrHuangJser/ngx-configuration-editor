@@ -21,7 +21,7 @@ export class UtilsService {
   }
 
   getItemRects(ids: string[]) {
-    const { scale } = this.editorStore.getValue();
+    const { scale, width, height } = this.editorStore.getValue();
     const { items } = this.editorStore.getValue();
     return ids.map<Partial<DOMRect>>(id => {
       const item = items[id];
@@ -33,8 +33,8 @@ export class UtilsService {
       const isRotate = item.styleProps.transform.rotate;
       const [left, top] = this.coordinatesSrv.clientToCanvas(itemRect.left, itemRect.top);
       return {
-        left: isRotate ? left : item.styleProps.transform.position.x,
-        top: isRotate ? top : item.styleProps.transform.position.y,
+        left: isRotate ? left : multiply(divide(item.styleProps.transform.position.x, 100), width),
+        top: isRotate ? top : multiply(divide(item.styleProps.transform.position.y, 100), height),
         width: divide(itemRect.width, scale),
         height: divide(itemRect.height, scale)
       };
@@ -248,5 +248,49 @@ export class UtilsService {
       }
     });
     return itemsStateMap;
+  }
+
+  setItemPercent(item: ItemFormData, parentWidth: number, parentHeight: number) {
+    const { usePercent } = item;
+    const { width, height } = item.styleProps.style;
+    const { x, y } = item.styleProps.transform.position;
+    const itemWidth = usePercent ? width : multiply(divide(width, parentWidth), 100);
+    const itemHeight = usePercent ? height : multiply(divide(height, parentHeight), 100);
+    const itemLeft = usePercent ? x : multiply(divide(x, parentWidth), 100);
+    const itemTop = usePercent ? y : multiply(divide(y, parentHeight), 100);
+    const children = item.children ? this.mapItemChildren(item.children, itemWidth, itemHeight) : null;
+    return {
+      ...item,
+      children,
+      usePercent: true,
+      styleProps: {
+        ...item.styleProps,
+        style: {
+          ...item.styleProps.style,
+          width: itemWidth,
+          height: itemHeight
+        },
+        transform: {
+          ...item.styleProps.transform,
+          position: {
+            x: itemLeft,
+            y: itemTop
+          }
+        }
+      }
+    };
+  }
+
+  mapItemChildren(list: ItemFormData[], parentWidth: number, parentHeight: number): ItemFormData[] {
+    return list.map<ItemFormData>(item => this.setItemPercent(item, parentWidth, parentHeight));
+  }
+
+  convertItemsToPercent(items: { [id: string]: ItemFormData }, width: number, height: number): { [id: string]: ItemFormData } {
+    const newItems: { [id: string]: ItemFormData } = {};
+    Object.keys(items).forEach(id => {
+      const item = items[id];
+      newItems[id] = { ...this.setItemPercent(item, width, height) };
+    });
+    return newItems;
   }
 }

@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { divide, multiply } from 'mathjs';
 import { merge, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { IBorderState } from '../../interface';
@@ -33,17 +32,17 @@ export class BorderAreaComponent implements OnInit, OnDestroy {
         .pipe(
           map<any, IBorderState>(() => {
             const { bordered, selected } = this.selectorStore.getValue();
-            const { items, width, height } = this.editorStore.getValue();
+            const { items } = this.editorStore.getValue();
             return {
               ...[...bordered].reduce<IBorderState>((obj, id) => {
                 const item = items[id];
                 return {
                   ...obj,
                   [id]: item && {
-                    left: multiply(divide(item.styleProps.transform.position.x, width), 100),
-                    top: multiply(divide(item.styleProps.transform.position.y, height), 100),
-                    width: multiply(divide(item.styleProps.style.width, width), 100),
-                    height: multiply(divide(item.styleProps.style.height, height), 100),
+                    left: item.styleProps.transform.position.x,
+                    top: item.styleProps.transform.position.y,
+                    width: item.styleProps.style.width,
+                    height: item.styleProps.style.height,
                     rotate: item.styleProps.transform.rotate
                   }
                 };
