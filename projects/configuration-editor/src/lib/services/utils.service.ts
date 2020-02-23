@@ -171,7 +171,7 @@ export class UtilsService {
     return itemStateMap;
   }
 
-  getMoveStateFromDirection(direction: string, ids: string[]) {
+  getAlignMoveStateFromDirection(direction: string, ids: string[]) {
     const itemsStateMap: { [id: string]: { x?: number; y?: number } } = {};
     const itemsRect = this.getItemRects(ids);
     const minX = Math.min(...itemsRect.map(rect => rect.left));

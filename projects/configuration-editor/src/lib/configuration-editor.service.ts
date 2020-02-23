@@ -114,8 +114,8 @@ export class ConfigurationEditorService {
   @action('ce-editor:alignSelected')
   alignItems(direction: AlignDirection, ids: string[]) {
     if (ids.length) {
-      const { items } = this.editorStore.getValue();
-      const itemsStateMap = this.utilsSrv.getMoveStateFromDirection(direction, ids);
+      const { items, width, height } = this.editorStore.getValue();
+      const itemsStateMap = this.utilsSrv.getAlignMoveStateFromDirection(direction, ids);
       const batchItems: { [id: string]: ItemFormData } = {};
       for (const id in itemsStateMap) {
         if (itemsStateMap.hasOwnProperty(id)) {
@@ -128,8 +128,8 @@ export class ConfigurationEditorService {
               transform: {
                 ...item.styleProps.transform,
                 position: {
-                  x: state.x || item.styleProps.transform.position.x,
-                  y: state.y || item.styleProps.transform.position.y
+                  x: state.x ? multiply(divide(state.x, width), 100) : item.styleProps.transform.position.x,
+                  y: state.y ? multiply(divide(state.y, height), 100) : item.styleProps.transform.position.y
                 }
               }
             }
@@ -142,55 +142,57 @@ export class ConfigurationEditorService {
 
   @action('ce-editor:groupItems')
   groupItems(ids: string[]) {
-    const { items } = this.editorStore.getValue();
-    const itemsClientBoxPercent = this.utilsSrv.getItemClientBoxByPercent(ids);
-    const newItem: ItemFormData = {
-      id: `${Date.now()}_${Math.round(Math.random() * 1000000)}`,
-      usePercent: true,
-      styleProps: {
-        style: { width: itemsClientBoxPercent.width, height: itemsClientBoxPercent.height, zIndex: Object.keys(items).length - ids.length },
-        transform: { position: { x: itemsClientBoxPercent.left, y: itemsClientBoxPercent.top }, scale: 1, rotate: 0 }
-      },
-      children: ids.map((id, index) => {
-        const item = items[id];
-        const {
-          styleProps: {
-            style,
-            transform: {
-              position: { x, y }
-            }
-          }
-        } = item;
-        return {
-          ...item,
-          styleProps: {
-            ...item.styleProps,
-            style: {
-              ...style,
-              zIndex: index + 1,
-              width: multiply(divide(style.width, itemsClientBoxPercent.width), 100),
-              height: multiply(divide(style.height, itemsClientBoxPercent.height), 100)
-            },
-            transform: {
-              ...item.styleProps.transform,
-              position: {
-                x: multiply(divide(subtract(x, itemsClientBoxPercent.left), itemsClientBoxPercent.width), 100),
-                y: multiply(divide(subtract(y, itemsClientBoxPercent.top), itemsClientBoxPercent.height), 100)
+    if (ids.length > 1) {
+      const { items } = this.editorStore.getValue();
+      const itemsClientBoxPercent = this.utilsSrv.getItemClientBoxByPercent(ids);
+      const newItem: ItemFormData = {
+        id: `${Date.now()}_${Math.round(Math.random() * 1000000)}`,
+        usePercent: true,
+        styleProps: {
+          style: { width: itemsClientBoxPercent.width, height: itemsClientBoxPercent.height, zIndex: Object.keys(items).length - ids.length },
+          transform: { position: { x: itemsClientBoxPercent.left, y: itemsClientBoxPercent.top }, scale: 1, rotate: 0 }
+        },
+        children: ids.map((id, index) => {
+          const item = items[id];
+          const {
+            styleProps: {
+              style,
+              transform: {
+                position: { x, y }
               }
             }
+          } = item;
+          return {
+            ...item,
+            styleProps: {
+              ...item.styleProps,
+              style: {
+                ...style,
+                zIndex: index + 1,
+                width: multiply(divide(style.width, itemsClientBoxPercent.width), 100),
+                height: multiply(divide(style.height, itemsClientBoxPercent.height), 100)
+              },
+              transform: {
+                ...item.styleProps.transform,
+                position: {
+                  x: multiply(divide(subtract(x, itemsClientBoxPercent.left), itemsClientBoxPercent.width), 100),
+                  y: multiply(divide(subtract(y, itemsClientBoxPercent.top), itemsClientBoxPercent.height), 100)
+                }
+              }
+            }
+          } as ItemFormData;
+        })
+      };
+      const newItems: { [id: string]: ItemFormData } = {};
+      for (const id in items) {
+        if (items.hasOwnProperty(id)) {
+          if (!ids.includes(id)) {
+            newItems[id] = { ...items[id] };
           }
-        } as ItemFormData;
-      })
-    };
-    const newItems: { [id: string]: ItemFormData } = {};
-    for (const id in items) {
-      if (items.hasOwnProperty(id)) {
-        if (!ids.includes(id)) {
-          newItems[id] = { ...items[id] };
         }
       }
+      this.editorStore.update({ items: { ...newItems, [newItem.id]: newItem } });
+      this.selectorStore.update({ bordered: new Set([newItem.id]), selected: new Set([newItem.id]) });
     }
-    this.editorStore.update({ items: { ...newItems, [newItem.id]: newItem } });
-    this.selectorStore.update({ bordered: new Set([newItem.id]), selected: new Set([newItem.id]) });
   }
 }
