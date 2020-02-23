@@ -43,6 +43,9 @@ export class UtilsService {
 
   getItemsClientBox(ids: string[]) {
     const selectedRects = this.getItemRects(ids);
+    if (selectedRects.includes(null)) {
+      return null;
+    }
     const left = Math.min(...selectedRects.map(rect => rect && rect.left));
     const top = Math.min(...selectedRects.map(rect => rect && rect.top));
     return {
