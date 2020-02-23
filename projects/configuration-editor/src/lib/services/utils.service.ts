@@ -45,9 +45,6 @@ export class UtilsService {
     const selectedRects = this.getItemRects(ids);
     const left = Math.min(...selectedRects.map(rect => rect && rect.left));
     const top = Math.min(...selectedRects.map(rect => rect && rect.top));
-    if (!left || !top) {
-      return null;
-    }
     return {
       left,
       top,
