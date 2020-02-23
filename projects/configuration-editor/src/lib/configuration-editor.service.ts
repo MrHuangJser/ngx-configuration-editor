@@ -258,4 +258,10 @@ export class ConfigurationEditorService {
         .reduce((obj, id) => ({ ...obj, [id]: { ...items[id] } }), {})
     });
   }
+
+  @action('ce-editor:addItems')
+  addItems(newItems: { [id: string]: ItemFormData }) {
+    const { items } = this.editorStore.getValue();
+    this.editorStore.update({ items: { ...items, ...newItems } });
+  }
 }
