@@ -6,5 +6,10 @@
     "@angular/core": "^8.2.14",
     "@datorama/akita": "^4.19.2",
     "mathjs": "^6.6.0"
-  }
+  },
+  "description": "configuration editor",
+  "repository": "https://github.com/MrHuangJser/ngx-configuration-editor",
+  "author": "MrHuangJser",
+  "license": "MIT",
+  "private": false
 }
