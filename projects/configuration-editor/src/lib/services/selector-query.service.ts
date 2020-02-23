@@ -18,6 +18,7 @@ export class SelectorQueryService extends Query<ISelectorState> {
   height$ = this.select('selectorHeight');
   selected$ = this.select('selected');
   bordered$ = this.select('bordered');
+  showResizeHandle$ = this.select('showResizeHandle');
 
   private subscription = new Subscription();
   constructor(

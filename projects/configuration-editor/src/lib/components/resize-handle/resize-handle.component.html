@@ -23,7 +23,7 @@
       />
     </svg>
   </div> -->
-  <ng-container *ngIf="showResizeHandle">
+  <ng-container *ngIf="selectorQuery.showResizeHandle$ | async">
     <div
       class="block n"
       ceDrag

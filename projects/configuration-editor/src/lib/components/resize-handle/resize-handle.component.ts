@@ -16,7 +16,6 @@ import { UtilsService } from '../../services/utils.service';
 })
 export class ResizeHandleComponent implements OnInit {
   select$: BehaviorSubject<ISelectState | null> = new BehaviorSubject<ISelectState | null>(null);
-  showResizeHandle = true;
 
   private subscription = new Subscription();
   constructor(

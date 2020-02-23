@@ -85,9 +85,14 @@ export class ItemComponent implements OnInit {
   }
 
   setDragStart(event: PointerEvent | null) {
+    if (!event) {
+      this.selectorQuery.setResizeHandleVisible(true);
+    } else {
+      this.selectorQuery.setResizeHandleVisible(false);
+    }
     if (event && event.button === 0) {
       const { selected } = this.selectorQuery.getValue();
-      if (!event.metaKey && selected.size === 0) {
+      if (!event.metaKey && (selected.size <= 1 || !selected.has(this._itemData.id))) {
         this.editorSrv.clearBorder();
         this.editorSrv.clearSelector();
       }
