@@ -1,11 +1,12 @@
-import { Injectable } from '@angular/core';
+import { Injectable, TrackByFunction } from '@angular/core';
 import { add, divide, multiply, subtract } from 'mathjs';
-import { BaseDirection, ISelectedItemPercentState, ISelectState } from '../interface';
+import { BaseDirection, ISelectedItemPercentState, ISelectState, ItemFormData } from '../interface';
 import { CoordinatesService } from './coordinates.service';
 import { EditorStore } from './editor.store';
 
 @Injectable()
 export class UtilsService {
+  itemsTrackBy: TrackByFunction<ItemFormData> = (_i, item) => item.id;
   constructor(private coordinatesSrv: CoordinatesService, private editorStore: EditorStore) {}
 
   pointIsInRect(point: [number, number], rect: Partial<DOMRect>) {

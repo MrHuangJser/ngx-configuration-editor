@@ -1,8 +1,10 @@
 import { ChangeDetectionStrategy, Component, ElementRef, HostListener, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { applyTransaction } from '@datorama/akita';
 import { divide, multiply } from 'mathjs';
 import { ConfigurationEditorService } from '../../configuration-editor.service';
 import { ItemFormData } from '../../interface';
+import { SelectorQueryService } from '../../services/selector-query.service';
+import { UtilsService } from '../../services/utils.service';
+import { SelectorStore } from '../../services/selector.store';
 
 const NO_UNIT_PROPERTY = ['zIndex'];
 
@@ -33,7 +35,12 @@ export class ItemComponent implements OnInit {
   }
 
   private _itemData: ItemFormData;
-  constructor(private editorSrv: ConfigurationEditorService) {}
+  constructor(
+    private editorSrv: ConfigurationEditorService,
+    public selectorQuery: SelectorQueryService,
+    public selectorStore: SelectorStore,
+    public utilsSrv: UtilsService
+  ) {}
 
   ngOnInit() {
     this.itemTpl = this.editorSrv.getItemViewTpl();
@@ -72,17 +79,21 @@ export class ItemComponent implements OnInit {
     this.editorSrv.toggleBorder(this._itemData.id, flag);
   }
 
-  @HostListener('pointerdown', ['$event'])
-  showSelector(event: PointerEvent) {
-    event.stopPropagation();
-    event.preventDefault();
-    applyTransaction(() => {
-      if (!event.metaKey) {
+  @HostListener('contextmenu', ['$event'])
+  contextmenu(event: MouseEvent) {
+    this.editorSrv.events$.next({ type: 'context', event, itemIds: [...this.selectorStore.getValue().selected] });
+  }
+
+  setDragStart(event: PointerEvent | null) {
+    if (event && event.button === 0) {
+      const { selected } = this.selectorQuery.getValue();
+      if (!event.metaKey && selected.size === 0) {
         this.editorSrv.clearBorder();
         this.editorSrv.clearSelector();
       }
       this.editorSrv.toggleSelector(this._itemData.id, true);
       this.editorSrv.toggleBorder(this._itemData.id, true);
-    });
+    }
+    this.selectorQuery.setStartSelectState(event);
   }
 }

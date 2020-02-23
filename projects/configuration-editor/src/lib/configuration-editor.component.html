@@ -1,6 +1,7 @@
 <div
   class="ce-editor-content"
   tabindex="0"
+  #content
   ceDrag
   [ceDragUseSpace]="true"
   (ceDragWaitDrag)="setSelectorDisable(true)"
@@ -17,8 +18,8 @@
   </ce-no-zoom-area>
   <ce-zoom-area>
     <ce-item
-      *ngFor="let item of editorQuery.items$ | async | keyvalue"
-      [ceItemData]="item.value"
+      *ngFor="let item of items$ | async; trackBy: utilsSrv.itemsTrackBy"
+      [ceItemData]="item"
       [ceItemParentWidth]="editorQuery.width$ | async"
       [ceItemParentHeight]="editorQuery.height$ | async"
     ></ce-item>

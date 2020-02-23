@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { applyTransaction, Query } from '@datorama/akita';
-import { divide } from 'mathjs';
+import { divide, subtract } from 'mathjs';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { ConfigurationEditorService } from '../configuration-editor.service';
+import { ISelectedItemPercentState, ISelectState } from '../interface';
 import { CoordinatesService } from './coordinates.service';
 import { EditorStore } from './editor.store';
 import { ISelectorState, SelectorStore } from './selector.store';
@@ -54,5 +55,61 @@ export class SelectorQueryService extends Query<ISelectorState> {
           }
         })
     );
+  }
+
+  private getSelectedItems() {
+    const { items } = this.editorStore.getValue();
+    const { selected } = this.store.getValue();
+    return [...selected].map(id => items[id]);
+  }
+
+  setResizeHandleVisible(visible: boolean) {
+    this.store.update({ showResizeHandle: visible });
+  }
+
+  setStartSelectState(event: PointerEvent | null) {
+    applyTransaction(() => {
+      if (event) {
+        const { selected } = this.store.getValue();
+        const ids = [...selected];
+
+        const startSelectorState = { ...this.utilsSrv.getItemsClientBox(ids) };
+        this.store.update({ startSelectorState });
+        const { width, height, left, top } = startSelectorState;
+        this.store.update({
+          startSelectItemState: new Map<string, ISelectState & ISelectedItemPercentState>(
+            this.getSelectedItems().map(item => {
+              const itemState: ISelectState = {
+                left: item.styleProps.transform.position.x,
+                top: item.styleProps.transform.position.y,
+                width: item.styleProps.style.width,
+                height: item.styleProps.style.height
+              };
+              const itemPercentState: ISelectedItemPercentState = {
+                leftPercent: selected.size === 1 ? 0 : (divide(subtract(itemState.left, left), width) as number),
+                topPercent: selected.size === 1 ? 0 : (divide(subtract(itemState.top, top), height) as number),
+                widthPercent: selected.size === 1 ? 1 : divide(itemState.width, width),
+                heightPercent: selected.size === 1 ? 1 : divide(itemState.height, height)
+              };
+              return [item.id, { ...itemState, ...itemPercentState }];
+            })
+          )
+        });
+      } else {
+        this.store.update({ startSelectItemState: null, startSelectorState: null });
+      }
+    });
+  }
+
+  moveSelected([mx, my]: [number, number]) {
+    const { scale, items } = this.editorStore.getValue();
+    const { startSelectItemState } = this.store.getValue();
+    const itemStateMap = {};
+    startSelectItemState.forEach(({ left, top }, id) => {
+      const item = items[id];
+      const [x, y] = [left + mx / scale, top + my / scale];
+      itemStateMap[id] = { ...item, styleProps: { ...item.styleProps, transform: { ...item.styleProps.transform, position: { x, y } } } };
+    });
+    this.editorSrv.updateItemBatch(itemStateMap);
   }
 }

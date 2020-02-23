@@ -6,10 +6,6 @@
   [style.top.%]="(select$ | async)?.top"
   [style.width.%]="(select$ | async)?.width"
   [style.height.%]="(select$ | async)?.height"
-  ceDrag
-  (ceDragStart)="showResizeHandle = false; setStartSelectState($event)"
-  (ceDragMoving)="moveSelected($event)"
-  (ceDragEnd)="showResizeHandle = true; setStartSelectState(null)"
 >
   <!-- <div
     class="rotate"
@@ -31,57 +27,57 @@
     <div
       class="block n"
       ceDrag
-      (ceDragStart)="setStartSelectState($event)"
-      (ceDragEnd)="setStartSelectState(null)"
+      (ceDragStart)="selectorQuery.setStartSelectState($event)"
+      (ceDragEnd)="selectorQuery.setStartSelectState(null)"
       (ceDragMoving)="multipleDirectionResize(['n'], $event)"
     ></div>
     <div
       class="block ne"
       ceDrag
-      (ceDragStart)="setStartSelectState($event)"
-      (ceDragEnd)="setStartSelectState(null)"
+      (ceDragStart)="selectorQuery.setStartSelectState($event)"
+      (ceDragEnd)="selectorQuery.setStartSelectState(null)"
       (ceDragMoving)="multipleDirectionResize(['n', 'e'], $event)"
     ></div>
     <div
       class="block e"
       ceDrag
-      (ceDragStart)="setStartSelectState($event)"
-      (ceDragEnd)="setStartSelectState(null)"
+      (ceDragStart)="selectorQuery.setStartSelectState($event)"
+      (ceDragEnd)="selectorQuery.setStartSelectState(null)"
       (ceDragMoving)="multipleDirectionResize(['e'], $event)"
     ></div>
     <div
       class="block se"
       ceDrag
-      (ceDragStart)="setStartSelectState($event)"
-      (ceDragEnd)="setStartSelectState(null)"
+      (ceDragStart)="selectorQuery.setStartSelectState($event)"
+      (ceDragEnd)="selectorQuery.setStartSelectState(null)"
       (ceDragMoving)="multipleDirectionResize(['s', 'e'], $event)"
     ></div>
     <div
       class="block s"
       ceDrag
-      (ceDragStart)="setStartSelectState($event)"
-      (ceDragEnd)="setStartSelectState(null)"
+      (ceDragStart)="selectorQuery.setStartSelectState($event)"
+      (ceDragEnd)="selectorQuery.setStartSelectState(null)"
       (ceDragMoving)="multipleDirectionResize(['s'], $event)"
     ></div>
     <div
       class="block sw"
       ceDrag
-      (ceDragStart)="setStartSelectState($event)"
-      (ceDragEnd)="setStartSelectState(null)"
+      (ceDragStart)="selectorQuery.setStartSelectState($event)"
+      (ceDragEnd)="selectorQuery.setStartSelectState(null)"
       (ceDragMoving)="multipleDirectionResize(['s', 'w'], $event)"
     ></div>
     <div
       class="block w"
       ceDrag
-      (ceDragStart)="setStartSelectState($event)"
-      (ceDragEnd)="setStartSelectState(null)"
+      (ceDragStart)="selectorQuery.setStartSelectState($event)"
+      (ceDragEnd)="selectorQuery.setStartSelectState(null)"
       (ceDragMoving)="multipleDirectionResize(['w'], $event)"
     ></div>
     <div
       class="block nw"
       ceDrag
-      (ceDragStart)="setStartSelectState($event)"
-      (ceDragEnd)="setStartSelectState(null)"
+      (ceDragStart)="selectorQuery.setStartSelectState($event)"
+      (ceDragEnd)="selectorQuery.setStartSelectState(null)"
       (ceDragMoving)="multipleDirectionResize(['n', 'w'], $event)"
     ></div>
   </ng-container>

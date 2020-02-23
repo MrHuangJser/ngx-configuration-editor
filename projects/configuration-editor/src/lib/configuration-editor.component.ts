@@ -2,17 +2,22 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  ElementRef,
   EventEmitter,
   HostBinding,
   HostListener,
   Input,
   OnDestroy,
   OnInit,
-  Output
+  Output,
+  ViewChild
 } from '@angular/core';
 import { applyTransaction } from '@datorama/akita';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { ConfigurationEditorService } from './configuration-editor.service';
 import { ISelectorMovingState } from './directives/selector.directive';
+import { ItemFormData } from './interface';
 import { CoordinatesService } from './services/coordinates.service';
 import { EditorStoreQuery } from './services/editor-query.service';
 import { EditorStore, IEditorState } from './services/editor.store';
@@ -41,19 +46,25 @@ export class ConfigurationEditorComponent implements OnInit, OnDestroy {
   @HostBinding('attr.editor-id') get editorId() {
     return this.coordinatesSrv.editorId;
   }
+  @ViewChild('content', { static: false, read: ElementRef }) contentEleRef: ElementRef<HTMLDivElement>;
   selectorDisabled = false;
+  items$: Observable<ItemFormData[]>;
 
   private _viewConfig: Partial<IEditorState>;
   private dragStartPoints: [number, number] | null = null;
+  private;
 
   constructor(
     public cdr: ChangeDetectorRef,
     public editorSrv: ConfigurationEditorService,
     public selectorQuery: SelectorQueryService,
     public editorQuery: EditorStoreQuery,
+    public utilsSrv: UtilsService,
     private store: EditorStore,
     private coordinatesSrv: CoordinatesService
-  ) {}
+  ) {
+    this.items$ = this.editorQuery.items$.pipe(map(items => Object.keys(items).map(id => items[id])));
+  }
 
   ngOnInit() {
     this.initEmitter.emit(this.editorSrv);
@@ -112,5 +123,20 @@ export class ConfigurationEditorComponent implements OnInit, OnDestroy {
     } else {
       this.editorSrv.showSelector(0, 0, 0, 0);
     }
+  }
+
+  @HostListener('pointerenter', ['true'])
+  @HostListener('pointerleave', ['false'])
+  autoFocus(flag: boolean) {
+    if (flag) {
+      this.contentEleRef.nativeElement.focus({ preventScroll: true });
+    } else {
+      this.contentEleRef.nativeElement.blur();
+    }
+  }
+
+  @HostListener('contextmenu', ['$event'])
+  contextmenu(event: MouseEvent) {
+    this.editorSrv.events$.next({ type: 'context', event, itemIds: null });
   }
 }

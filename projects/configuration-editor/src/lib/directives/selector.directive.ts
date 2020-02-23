@@ -25,7 +25,7 @@ export class SelectorDirective implements OnInit, OnDestroy {
     this.subscription.add(
       fromEvent<PointerEvent>(this.eleRef.nativeElement, 'pointerdown')
         .pipe(
-          filter(() => !this.disabled),
+          filter(event => !this.disabled && event.button === 0),
           switchMap(startEv => {
             this.start.emit(startEv);
             return pointermoveEvent$.pipe(

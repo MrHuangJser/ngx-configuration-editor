@@ -106,3 +106,16 @@ export interface IBorderState {
 }
 
 export type AlignDirection = 'left' | 'top' | 'right' | 'bottom' | 'horizontal' | 'vertical' | 'distribute-horizontal' | 'distribute-vertical';
+
+export interface IEditorKeyEvent {
+  type: 'keydown';
+  event: KeyboardEvent;
+}
+
+export interface IEditorContextEvent {
+  type: 'context';
+  event: MouseEvent;
+  itemIds: string[] | null;
+}
+
+export type EditorEventsType = IEditorKeyEvent | IEditorContextEvent;

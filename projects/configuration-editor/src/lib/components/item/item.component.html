@@ -1,11 +1,22 @@
-<div class="ce-item" #ceItem [attr.ce-item-id]="itemData?.id" [ngStyle]="styles" [style.left.%]="left" [style.top.%]="top">
+<div
+  class="ce-item"
+  #ceItem
+  [attr.ce-item-id]="itemData?.id"
+  [ngStyle]="styles"
+  [style.left.%]="left"
+  [style.top.%]="top"
+  ceDrag
+  (ceDragStart)="setDragStart($event)"
+  (ceDragMoving)="selectorQuery.moveSelected($event)"
+  (ceDragEnd)="setDragStart(null)"
+>
   <ng-container
-    *ngIf="!itemData.children || !itemData.children.length"
+    *ngIf="!itemData?.children || !itemData?.children.length"
     [ngTemplateOutlet]="itemTpl"
     [ngTemplateOutletContext]="{ $implicit: itemData }"
   ></ng-container>
-  <div class="ce-item-group" *ngIf="itemData.children && itemData.children.length">
-    <ng-container *ngFor="let data of itemData.children">
+  <div class="ce-item-group" *ngIf="itemData?.children && itemData?.children.length">
+    <ng-container *ngFor="let data of itemData?.children; trackBy: utilsSrv.itemsTrackBy">
       <ce-item
         [ceItemData]="data"
         [ceItemParentWidth]="itemData?.styleProps?.style?.width"

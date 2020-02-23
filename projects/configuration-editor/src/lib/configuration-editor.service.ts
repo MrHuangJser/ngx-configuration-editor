@@ -1,6 +1,7 @@
 import { Injectable, TemplateRef } from '@angular/core';
 import { action } from '@datorama/akita';
-import { AlignDirection, IMenu, ItemFormData } from './interface';
+import { Subject } from 'rxjs';
+import { AlignDirection, ItemFormData, EditorEventsType } from './interface';
 import { EditorStore, IEditorState } from './services/editor.store';
 import { SelectorStore } from './services/selector.store';
 import { UtilsService } from './services/utils.service';
@@ -9,7 +10,7 @@ import { UtilsService } from './services/utils.service';
   providedIn: 'root'
 })
 export class ConfigurationEditorService {
-  menus: IMenu[] = [];
+  events$ = new Subject<EditorEventsType>();
   private itemViewTpl: TemplateRef<void>;
 
   constructor(public editorStore: EditorStore, public selectorStore: SelectorStore, public utilsSrv: UtilsService) {}
