@@ -4,6 +4,7 @@
   <button (click)="align('distribute-horizontal')">align</button>
   <button (click)="group()">group</button>
   <button (click)="breakUp()">breakUp</button>
+  <button (click)="update()">update</button>
 </div>
 <div [ngStyle]="{ 'width.vw': 80, 'height.vh': 80, margin: '10vh 10vw' }">
   <ce-configuration-editor [ceConfig]="viewConfig" (ceOnInit)="editorInit($event)">

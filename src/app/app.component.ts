@@ -36,4 +36,22 @@ export class AppComponent {
   breakUp() {
     this.editorSrv.breakUpItem([...this.editorSrv.selectorStore.getValue().selected][0]);
   }
+
+  update() {
+    const { items } = this.editorSrv.editorStore.getValue();
+    const { selected } = this.editorSrv.selectorStore.getValue();
+    if (selected.size === 1) {
+      const item = items[[...selected][0]];
+      this.editorSrv.updateItemBatch({
+        [item.id]: {
+          ...item,
+          styleProps: {
+            ...item.styleProps,
+            style: { ...item.styleProps.style, height: 15 },
+            transform: { ...item.styleProps.transform, position: { x: 30, y: 0 } }
+          }
+        }
+      });
+    }
+  }
 }
