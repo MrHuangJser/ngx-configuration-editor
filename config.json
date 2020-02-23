@@ -5,6 +5,7 @@
       "id": "1580797334903_9202348",
       "name": "开关",
       "children": null,
+      "locked": true,
       "widget": {
         "type": "IMAGE_SWITCH",
         "props": {

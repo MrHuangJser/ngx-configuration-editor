@@ -1,7 +1,14 @@
+<div>
+  <button (click)="editorSrv.undo()">undo</button>
+  <button (click)="editorSrv.redo()">redo</button>
+  <button (click)="align('distribute-horizontal')">align</button>
+  <button (click)="group()">group</button>
+  <button (click)="breakUp()">breakUp</button>
+</div>
 <div [ngStyle]="{ 'width.vw': 80, 'height.vh': 80, margin: '10vh 10vw' }">
-  <ce-configuration-editor [ceConfig]="viewConfig">
-    <ng-template ceItemView>
-      <h2>test</h2>
+  <ce-configuration-editor [ceConfig]="viewConfig" (ceOnInit)="editorInit($event)">
+    <ng-template ceItemView let-item>
+      <h2>{{ item?.name || 'test' }}</h2>
     </ng-template>
   </ce-configuration-editor>
 </div>
