@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Query } from '@datorama/akita';
-import { EditorStore, IEditorState } from './editor.store';
+import { IEditorState } from '../interface';
+import { EditorStore } from './editor.store';
 
 @Injectable()
 export class EditorStoreQuery extends Query<IEditorState> {

@@ -2,18 +2,8 @@ import { Injectable } from '@angular/core';
 import { Store } from '@datorama/akita';
 import { Subject, Subscription } from 'rxjs';
 import { bufferWhen, debounceTime } from 'rxjs/operators';
-import { ItemFormData } from '../interface';
+import { IEditorState } from '../interface';
 import { SelectorStore } from './selector.store';
-
-export interface IEditorState {
-  width: number;
-  height: number;
-  scale: number;
-  left: number;
-  top: number;
-  background: string | null;
-  items: { [id: string]: ItemFormData };
-}
 
 function createInitialState(): IEditorState {
   return {

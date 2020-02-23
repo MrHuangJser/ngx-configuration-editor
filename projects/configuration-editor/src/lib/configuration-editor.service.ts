@@ -2,8 +2,8 @@ import { Injectable, TemplateRef } from '@angular/core';
 import { action } from '@datorama/akita';
 import { add, divide, multiply, subtract } from 'mathjs';
 import { Subject } from 'rxjs';
-import { AlignDirection, EditorEventsType, ItemFormData } from './interface';
-import { EditorStore, IEditorState } from './services/editor.store';
+import { AlignDirection, EditorEventsType, IEditorState, ItemFormData } from './interface';
+import { EditorStore } from './services/editor.store';
 import { SelectorStore } from './services/selector.store';
 import { UtilsService } from './services/utils.service';
 

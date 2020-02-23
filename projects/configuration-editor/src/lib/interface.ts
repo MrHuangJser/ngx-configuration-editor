@@ -1,3 +1,13 @@
+export interface IEditorState {
+  width: number;
+  height: number;
+  scale: number;
+  left: number;
+  top: number;
+  background: string | null;
+  items: { [id: string]: ItemFormData };
+}
+
 export interface ItemFormData {
   id?: string;
   name?: string;
