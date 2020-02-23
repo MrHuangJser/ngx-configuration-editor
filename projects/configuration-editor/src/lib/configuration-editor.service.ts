@@ -1,6 +1,6 @@
 import { Injectable, TemplateRef } from '@angular/core';
 import { action } from '@datorama/akita';
-import { divide, multiply, subtract } from 'mathjs';
+import { divide, multiply, subtract, add } from 'mathjs';
 import { Subject } from 'rxjs';
 import { AlignDirection, EditorEventsType, ItemFormData } from './interface';
 import { EditorStore, IEditorState } from './services/editor.store';
@@ -149,7 +149,7 @@ export class ConfigurationEditorService {
         id: `${Date.now()}_${Math.round(Math.random() * 1000000)}`,
         usePercent: true,
         styleProps: {
-          style: { width: itemsClientBoxPercent.width, height: itemsClientBoxPercent.height, zIndex: Object.keys(items).length - ids.length },
+          style: { width: itemsClientBoxPercent.width, height: itemsClientBoxPercent.height, zIndex: Object.keys(items).length - ids.length || 1 },
           transform: { position: { x: itemsClientBoxPercent.left, y: itemsClientBoxPercent.top }, scale: 1, rotate: 0 }
         },
         children: ids.map((id, index) => {
@@ -193,6 +193,62 @@ export class ConfigurationEditorService {
       }
       this.editorStore.update({ items: { ...newItems, [newItem.id]: newItem } });
       this.selectorStore.update({ bordered: new Set([newItem.id]), selected: new Set([newItem.id]) });
+    }
+  }
+
+  @action('ce-editor:breakUpItem')
+  breakUpItem(id: string) {
+    const { items, width, height } = this.editorStore.getValue();
+    const item = items[id];
+    if (item.children && item.children.length) {
+      const newItems: { [id: string]: ItemFormData } = {};
+      item.children.forEach((children, index) => {
+        const {
+          styleProps: {
+            style: { width: childWidth, height: childHeight },
+            transform: {
+              position: { x: childX, y: childY }
+            }
+          }
+        } = children;
+        const {
+          styleProps: {
+            style: { width: itemWidth, height: itemHeight, zIndex },
+            transform: {
+              position: { x: itemX, y: itemY }
+            }
+          }
+        } = item;
+        newItems[children.id] = {
+          ...children,
+          styleProps: {
+            ...children.styleProps,
+            style: {
+              ...children.styleProps.style,
+              zIndex: zIndex + index,
+              width: multiply(itemWidth, divide(childWidth, 100)),
+              height: multiply(itemHeight, divide(childHeight, 100))
+            },
+            transform: {
+              ...children.styleProps.transform,
+              position: {
+                x: add(multiply(divide(childX, 100), itemWidth), itemX),
+                y: add(multiply(divide(childY, 100), itemHeight), itemY)
+              }
+            }
+          }
+        } as ItemFormData;
+      });
+      this.editorStore.update({
+        items: {
+          ...newItems,
+          ...Object.keys(items).reduce((obj, key) => ({ ...obj, ...(id !== key ? { [key]: { ...items[key] } } : {}) }), {})
+        }
+      });
+      this.selectorStore.update({
+        bordered: new Set(Object.keys(newItems)),
+        selected: new Set(Object.keys(newItems))
+      });
     }
   }
 }

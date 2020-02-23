@@ -10,6 +10,7 @@ import { ConfigurationEditorComponent } from './configuration-editor.component';
 import { DragDirective } from './directives/drag.directive';
 import { ItemViewDirective } from './directives/item-view.directive';
 import { SelectorDirective } from './directives/selector.directive';
+import { FormatNumberPipe } from './pipes/format-number.pipe';
 
 const COMPONENTS = [
   ConfigurationEditorComponent,
@@ -21,9 +22,10 @@ const COMPONENTS = [
   ItemComponent
 ];
 const DIRECTIVES = [DragDirective, SelectorDirective, ItemViewDirective];
+const PIPES = [FormatNumberPipe];
 
 @NgModule({
-  declarations: [...COMPONENTS, ...DIRECTIVES],
+  declarations: [...COMPONENTS, ...DIRECTIVES, ...PIPES],
   imports: [CommonModule],
   exports: [ConfigurationEditorComponent, ItemViewDirective]
 })

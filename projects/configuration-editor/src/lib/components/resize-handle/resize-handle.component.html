@@ -2,10 +2,10 @@
   data-html2canvas-ignore
   class="ce-resize-content"
   *ngIf="(selectorQuery.selected$ | async).size"
-  [style.left.%]="(select$ | async)?.left"
-  [style.top.%]="(select$ | async)?.top"
-  [style.width.%]="(select$ | async)?.width"
-  [style.height.%]="(select$ | async)?.height"
+  [style.left.%]="(select$ | async)?.left | formatNumber"
+  [style.top.%]="(select$ | async)?.top | formatNumber"
+  [style.width.%]="(select$ | async)?.width | formatNumber"
+  [style.height.%]="(select$ | async)?.height | formatNumber"
 >
   <!-- <div
     class="rotate"
