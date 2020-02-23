@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
-import { IEditorState } from 'projects/configuration-editor/src/lib/services/editor.store';
-import { AlignDirection, ConfigurationEditorService } from 'projects/configuration-editor/src/public-api';
+import { AlignDirection, ConfigurationEditorService, IEditorState } from 'projects/configuration-editor/src/public-api';
 import * as config from '../../config.json';
 
 @Component({
