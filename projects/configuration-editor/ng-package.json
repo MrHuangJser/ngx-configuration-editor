@@ -3,5 +3,6 @@
   "dest": "../../dist/configuration-editor",
   "lib": {
     "entryFile": "src/public-api.ts"
-  }
+  },
+  "whitelistedNonPeerDependencies": ["tslib", "@datorama/akita", "mathjs"]
 }
