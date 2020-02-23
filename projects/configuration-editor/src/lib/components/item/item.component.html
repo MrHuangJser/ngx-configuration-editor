@@ -8,6 +8,7 @@
   [style.left.%]="itemData?.styleProps?.transform?.position.x | formatNumber"
   [style.top.%]="itemData?.styleProps?.transform?.position.y | formatNumber"
   ceDrag
+  [ceDragDisabled]="itemData?.locked"
   (ceDragStart)="setDragStart($event)"
   (ceDragMoving)="selectorQuery.moveSelected($event)"
   (ceDragEnd)="setDragStart(null)"
