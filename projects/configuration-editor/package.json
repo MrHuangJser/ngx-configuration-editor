@@ -1,11 +1,13 @@
 {
   "name": "ngx-configuration-editor",
-  "version": "0.0.2",
-  "peerDependencies": {
-    "@angular/common": "^8.2.14",
-    "@angular/core": "^8.2.14",
+  "version": "0.0.3",
+  "dependencies": {
     "@datorama/akita": "^4.19.2",
     "mathjs": "^6.6.0"
+  },
+  "peerDependencies": {
+    "@angular/common": "^8.2.14",
+    "@angular/core": "^8.2.14"
   },
   "description": "configuration editor",
   "repository": "https://github.com/MrHuangJser/ngx-configuration-editor",
