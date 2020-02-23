@@ -10,6 +10,7 @@ import { ConfigurationEditorComponent } from './configuration-editor.component';
 import { DragDirective } from './directives/drag.directive';
 import { ItemViewDirective } from './directives/item-view.directive';
 import { SelectorDirective } from './directives/selector.directive';
+import { MenuComponent } from './components/menu/menu.component';
 
 const COMPONENTS = [
   ConfigurationEditorComponent,
@@ -23,7 +24,7 @@ const COMPONENTS = [
 const DIRECTIVES = [DragDirective, SelectorDirective, ItemViewDirective];
 
 @NgModule({
-  declarations: [...COMPONENTS, ...DIRECTIVES],
+  declarations: [...COMPONENTS, ...DIRECTIVES, MenuComponent],
   imports: [CommonModule],
   exports: [ConfigurationEditorComponent, ItemViewDirective]
 })

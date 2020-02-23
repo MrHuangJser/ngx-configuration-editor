@@ -169,4 +169,83 @@ export class UtilsService {
     });
     return itemStateMap;
   }
+
+  getMoveStateFromDirection(direction: string, ids: string[]) {
+    const itemsStateMap: { [id: string]: { x?: number; y?: number } } = {};
+    const itemsRect = this.getItemRects(ids);
+    const minX = Math.min(...itemsRect.map(rect => rect.left));
+    const minY = Math.min(...itemsRect.map(rect => rect.top));
+    const maxX = Math.max(...itemsRect.map(rect => rect.left + rect.width));
+    const maxY = Math.max(...itemsRect.map(rect => rect.top + rect.height));
+    const middleX = (maxX - minX) / 2 + minX;
+    const middleY = (maxY - minY) / 2 + minY;
+    ids.forEach((id, index) => {
+      const rect = itemsRect[index];
+      switch (direction) {
+        case 'left':
+          itemsStateMap[id].x = minX;
+          break;
+        case 'top':
+          itemsStateMap[id] = { y: minY };
+          break;
+        case 'right':
+          itemsStateMap[id] = { x: maxX - rect.width };
+          break;
+        case 'bottom':
+          itemsStateMap[id] = { y: maxY - rect.height };
+          break;
+        case 'horizontal':
+          itemsStateMap[id] = { x: middleX - rect.width / 2 };
+          break;
+        case 'vertical':
+          itemsStateMap[id] = { y: middleY - rect.height / 2 };
+          break;
+      }
+    });
+    const sortedItems = itemsRect.map((rect, index) => ({ ...rect, id: ids[index] }));
+    sortedItems.sort((a, b) => {
+      switch (direction) {
+        case 'distribute-horizontal':
+          return a.left - b.left;
+        case 'distribute-vertical':
+          return a.top - b.top;
+      }
+    });
+    const gutter =
+      sortedItems.reduce((sum, item, index) => {
+        if (index !== 0) {
+          switch (direction) {
+            case 'distribute-horizontal':
+              sum += item.left - sortedItems[index - 1].left - sortedItems[index - 1].width;
+              break;
+            case 'distribute-vertical':
+              sum += item.top - sortedItems[index - 1].top - sortedItems[index - 1].height;
+              break;
+          }
+        }
+        return sum;
+      }, 0) /
+      (sortedItems.length - 1);
+
+    let prevItem: any;
+    sortedItems.forEach((item, index) => {
+      if (index !== 0 && index !== sortedItems.length - 1) {
+        switch (direction) {
+          case 'distribute-horizontal':
+            const left = prevItem.left + prevItem.width + gutter;
+            itemsStateMap[item.id] = { x: left };
+            prevItem = { ...item, left };
+            break;
+          case 'distribute-vertical':
+            const top = prevItem.top + prevItem.height + gutter;
+            itemsStateMap[item.id] = { y: top };
+            prevItem = { ...item, top };
+            break;
+        }
+      } else {
+        prevItem = item;
+      }
+    });
+    return itemsStateMap;
+  }
 }

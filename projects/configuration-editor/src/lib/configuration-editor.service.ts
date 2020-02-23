@@ -1,17 +1,18 @@
 import { Injectable, TemplateRef } from '@angular/core';
 import { action } from '@datorama/akita';
-import { ItemFormData } from './interface';
+import { AlignDirection, IMenu, ItemFormData } from './interface';
 import { EditorStore, IEditorState } from './services/editor.store';
 import { SelectorStore } from './services/selector.store';
+import { UtilsService } from './services/utils.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ConfigurationEditorService {
-  editorId: string;
+  menus: IMenu[] = [];
   private itemViewTpl: TemplateRef<void>;
 
-  constructor(public editorStore: EditorStore, public selectorStore: SelectorStore) {}
+  constructor(public editorStore: EditorStore, public selectorStore: SelectorStore, public utilsSrv: UtilsService) {}
 
   getItemViewTpl() {
     return this.itemViewTpl;
@@ -106,5 +107,34 @@ export class ConfigurationEditorService {
   updateItemBatch(itemsStateMap: { [id: string]: ItemFormData }) {
     const { items } = this.editorStore.getValue();
     this.editorStore.update({ items: { ...items, ...itemsStateMap } });
+  }
+
+  @action('ce-editor:alignSelected')
+  alignItems(direction: AlignDirection, ids: string[]) {
+    if (ids.length) {
+      const { items } = this.editorStore.getValue();
+      const itemsStateMap = this.utilsSrv.getMoveStateFromDirection(direction, ids);
+      const batchItems: { [id: string]: ItemFormData } = {};
+      for (const id in itemsStateMap) {
+        if (itemsStateMap.hasOwnProperty(id)) {
+          const state = itemsStateMap[id];
+          const item = items[id];
+          batchItems[id] = {
+            ...item,
+            styleProps: {
+              ...item.styleProps,
+              transform: {
+                ...item.styleProps.transform,
+                position: {
+                  x: state.x || item.styleProps.transform.position.x,
+                  y: state.y || item.styleProps.transform.position.y
+                }
+              }
+            }
+          };
+        }
+      }
+      this.editorStore.update({ items: { ...items, ...batchItems } });
+    }
   }
 }

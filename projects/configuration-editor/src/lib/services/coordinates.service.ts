@@ -1,13 +1,15 @@
 import { Injectable } from '@angular/core';
-import { ConfigurationEditorService } from '../configuration-editor.service';
 import { EditorStore } from './editor.store';
 
 @Injectable()
 export class CoordinatesService {
-  constructor(private store: EditorStore, private editorSrv: ConfigurationEditorService) {}
+  public editorId: string;
+  constructor(private store: EditorStore) {
+    this.editorId = `${Date.now()}-${Math.round(Math.random() * 1000000)}`;
+  }
 
   private getEditorElement(): HTMLElement {
-    return document.querySelector(`[editor-id="${this.editorSrv.editorId}"]`);
+    return document.querySelector(`[editor-id="${this.editorId}"]`);
   }
 
   clientToEditor(x: number, y: number): [number, number] {

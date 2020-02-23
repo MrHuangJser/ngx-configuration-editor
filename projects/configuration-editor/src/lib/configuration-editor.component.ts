@@ -38,7 +38,9 @@ export class ConfigurationEditorComponent implements OnInit, OnDestroy {
     return this._viewConfig;
   }
   @Output('ceOnInit') initEmitter = new EventEmitter<ConfigurationEditorService>();
-  @HostBinding('attr.editor-id') editorId: string;
+  @HostBinding('attr.editor-id') get editorId() {
+    return this.coordinatesSrv.editorId;
+  }
   selectorDisabled = false;
 
   private _viewConfig: Partial<IEditorState>;
@@ -54,8 +56,6 @@ export class ConfigurationEditorComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.editorSrv.editorId = `editor_${Date.now()}${Math.round(Math.random() * 100000)}`;
-    this.editorId = this.editorSrv.editorId;
     this.initEmitter.emit(this.editorSrv);
   }
 
