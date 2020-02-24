@@ -262,9 +262,11 @@ export class ConfigurationEditorService {
   @action('ce-editor:addItems')
   addItems(newItems: { [id: string]: ItemFormData }) {
     const { items, width, height } = this.editorStore.getValue();
+    const itemsLength = Object.keys(items).length;
     const batchItems: { [id: string]: ItemFormData } = {};
     const tempItems: { [id: string]: ItemFormData } = {};
-    Object.values(newItems).forEach(item => {
+    Object.values(newItems).forEach((item, index) => {
+      item.styleProps.style.zIndex = itemsLength + index + 1;
       if (item.usePercent) {
         batchItems[item.id] = { ...item };
       } else {
