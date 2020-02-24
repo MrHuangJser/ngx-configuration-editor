@@ -54,4 +54,8 @@ export class AppComponent {
       });
     }
   }
+
+  log(obj: any) {
+    console.log(obj);
+  }
 }

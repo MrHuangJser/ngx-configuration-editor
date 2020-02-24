@@ -8,8 +8,8 @@
 </div>
 <div [ngStyle]="{ 'width.vw': 80, 'height.vh': 80, margin: '10vh 10vw' }">
   <ce-configuration-editor [ceConfig]="viewConfig" (ceOnInit)="editorInit($event)">
-    <ng-template ceItemView let-item>
-      <h2>{{ item?.name || 'test' }}</h2>
+    <ng-template ceItemView let-item let-parentWidth="parentWidth" let-parentHeight="parentHeight">
+      <h2>{{ item?.name || 'test' }}{{ log(parentWidth) }}{{ log(parentHeight) }}</h2>
     </ng-template>
   </ce-configuration-editor>
 </div>

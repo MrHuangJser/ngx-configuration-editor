@@ -261,7 +261,16 @@ export class ConfigurationEditorService {
 
   @action('ce-editor:addItems')
   addItems(newItems: { [id: string]: ItemFormData }) {
-    const { items } = this.editorStore.getValue();
-    this.editorStore.update({ items: { ...items, ...newItems } });
+    const { items, width, height } = this.editorStore.getValue();
+    const batchItems: { [id: string]: ItemFormData } = {};
+    const tempItems: { [id: string]: ItemFormData } = {};
+    Object.values(newItems).forEach(item => {
+      if (item.usePercent) {
+        batchItems[item.id] = { ...item };
+      } else {
+        tempItems[item.id] = { ...item };
+      }
+    });
+    this.editorStore.update({ items: { ...items, ...batchItems, ...this.utilsSrv.convertItemsToPercent(tempItems, width, height) } });
   }
 }
