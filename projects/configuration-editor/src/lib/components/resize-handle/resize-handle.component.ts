@@ -28,7 +28,15 @@ export class ResizeHandleComponent {
     private utilsSrv: UtilsService
   ) {
     this.resizeHandleVisible$ = merge(this.selectorQuery.showResizeHandle$, this.selectorQuery.selected$).pipe(
-      map(() => this.selectorStore.getValue().showResizeHandle)
+      map(() => {
+        const { showResizeHandle, selected } = this.selectorQuery.getValue();
+        const { items } = this.editorQuery.getValue();
+        if (selected.size === 1) {
+          const item = items[[...selected][0]];
+          return item.locked ? false : showResizeHandle;
+        }
+        return showResizeHandle;
+      })
     );
     this.select$ = merge(this.selectorQuery.selected$, this.editorQuery.items$).pipe(
       map(() => this.calculateSelector()),
