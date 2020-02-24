@@ -258,7 +258,9 @@ export class UtilsService {
     const itemHeight = usePercent ? height : multiply(divide(height, parentHeight), 100);
     const itemLeft = usePercent ? x : multiply(divide(x, parentWidth), 100);
     const itemTop = usePercent ? y : multiply(divide(y, parentHeight), 100);
-    const children = item.children ? this.mapItemChildren(item.children, itemWidth, itemHeight) : null;
+    const children = item.children
+      ? this.mapItemChildren(item.children, multiply(divide(itemWidth, 100), parentWidth), multiply(divide(itemHeight, 100), parentHeight))
+      : null;
     return {
       ...item,
       children,
