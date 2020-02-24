@@ -23,10 +23,10 @@ export class SelectorQueryService extends Query<ISelectorState> {
   private subscription = new Subscription();
   constructor(
     protected store: SelectorStore,
-    private editorSrv: ConfigurationEditorService,
-    private editorStore: EditorStore,
-    private coordinatesSrv: CoordinatesService,
-    private utilsSrv: UtilsService
+    public editorSrv: ConfigurationEditorService,
+    public editorStore: EditorStore,
+    public coordinatesSrv: CoordinatesService,
+    public utilsSrv: UtilsService
   ) {
     super(store);
     this.subscription.add(

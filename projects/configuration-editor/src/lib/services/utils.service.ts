@@ -7,7 +7,7 @@ import { EditorStore } from './editor.store';
 @Injectable()
 export class UtilsService {
   itemsTrackBy: TrackByFunction<ItemFormData> = (_i, item) => item.id;
-  constructor(private coordinatesSrv: CoordinatesService, private editorStore: EditorStore) {}
+  constructor(public coordinatesSrv: CoordinatesService, public editorStore: EditorStore) {}
 
   pointIsInRect(point: [number, number], rect: Partial<DOMRect>) {
     const { left, top, width, height } = rect;

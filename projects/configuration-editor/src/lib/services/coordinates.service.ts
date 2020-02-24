@@ -4,7 +4,7 @@ import { EditorStore } from './editor.store';
 @Injectable()
 export class CoordinatesService {
   public editorId: string;
-  constructor(private store: EditorStore) {
+  constructor(public store: EditorStore) {
     this.editorId = `${Date.now()}-${Math.round(Math.random() * 1000000)}`;
   }
 
