@@ -16,7 +16,7 @@
   <ng-container
     *ngIf="!itemData?.children || !itemData?.children.length"
     [ngTemplateOutlet]="itemTpl"
-    [ngTemplateOutletContext]="{ $implicit: itemData }"
+    [ngTemplateOutletContext]="{ $implicit: itemData, parentWidth: parentWidth, parentHeight: parentHeight }"
   ></ng-container>
   <div class="ce-item-group" *ngIf="itemData?.children && itemData?.children.length">
     <ng-container *ngFor="let data of itemData?.children; trackBy: utilsSrv.itemsTrackBy">
