@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, ElementRef, HostListener, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { applyTransaction } from '@datorama/akita';
 import { ConfigurationEditorService } from '../../configuration-editor.service';
 import { ItemFormData } from '../../interface';
 import { SelectorQueryService } from '../../services/selector-query.service';
@@ -73,7 +74,22 @@ export class ItemComponent implements OnInit {
 
   @HostListener('contextmenu', ['$event'])
   contextmenu(event: MouseEvent) {
-    this.editorSrv.events$.next({ type: 'context', event, itemIds: [...this.selectorStore.getValue().selected] });
+    event.stopPropagation();
+    event.preventDefault();
+    const { selected } = this.selectorStore.getValue();
+    if (selected.has(this._itemData.id)) {
+      this.editorSrv.events$.next({ type: 'context', event, itemIds: [...selected] });
+    } else {
+      applyTransaction(() => {
+        this.editorSrv.clearSelector();
+        this.editorSrv.clearBorder();
+        this.editorSrv.toggleBorder(this._itemData.id, true);
+        if (!this._itemData.locked) {
+          this.editorSrv.toggleSelector(this._itemData.id, true);
+        }
+        this.editorSrv.events$.next({ type: 'context', event, itemIds: [this._itemData.id] });
+      });
+    }
   }
 
   setDragStart(event: PointerEvent | null) {

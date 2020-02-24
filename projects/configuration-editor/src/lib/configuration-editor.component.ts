@@ -107,12 +107,14 @@ export class ConfigurationEditorComponent implements OnInit, OnDestroy {
     }
   }
 
-  @HostListener('pointerdown')
-  clearSelectorState() {
-    applyTransaction(() => {
-      this.editorSrv.clearBorder();
-      this.editorSrv.clearSelector();
-    });
+  @HostListener('pointerdown', ['$event'])
+  clearSelectorState(event: PointerEvent) {
+    if (event.button === 0) {
+      applyTransaction(() => {
+        this.editorSrv.clearBorder();
+        this.editorSrv.clearSelector();
+      });
+    }
   }
 
   showSelector(state: ISelectorMovingState | null) {
@@ -137,6 +139,12 @@ export class ConfigurationEditorComponent implements OnInit, OnDestroy {
 
   @HostListener('contextmenu', ['$event'])
   contextmenu(event: MouseEvent) {
+    event.stopPropagation();
+    event.preventDefault();
+    applyTransaction(() => {
+      this.editorSrv.clearBorder();
+      this.editorSrv.clearSelector();
+    });
     this.editorSrv.events$.next({ type: 'context', event, itemIds: null });
   }
 }
