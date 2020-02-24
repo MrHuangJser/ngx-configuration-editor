@@ -27,7 +27,7 @@ export interface ItemStyle {
   backgroundColor?: string;
   backgroundImage?: string;
   borderWidth?: number;
-  borderType?: 'dashed' | 'solid';
+  borderStyle?: 'dashed' | 'solid';
   borderColor?: string;
   width?: number;
   height?: number;
