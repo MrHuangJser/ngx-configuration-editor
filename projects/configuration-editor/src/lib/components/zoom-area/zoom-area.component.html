@@ -5,6 +5,7 @@
   [style.left.px]="editorQuery.left$ | async"
   [style.top.px]="editorQuery.top$ | async"
   [style.transform]="'scale(' + (editorQuery.scale$ | async) + ')'"
+  [style.background-image]="ds.bypassSecurityTrustStyle('url(' + (editorQuery.background$ | async) + ')')"
 >
   <ng-content></ng-content>
 </div>

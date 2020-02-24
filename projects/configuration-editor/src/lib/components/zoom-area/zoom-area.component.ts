@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
 import { EditorStoreQuery } from '../../services/editor-query.service';
 import { EditorStore } from '../../services/editor.store';
 
@@ -7,7 +8,7 @@ import { EditorStore } from '../../services/editor.store';
   templateUrl: './zoom-area.component.html'
 })
 export class ZoomAreaComponent implements OnInit {
-  constructor(public editorStore: EditorStore, public editorQuery: EditorStoreQuery) {}
+  constructor(public editorStore: EditorStore, public editorQuery: EditorStoreQuery, public ds: DomSanitizer) {}
 
   ngOnInit() {}
 }
