@@ -157,10 +157,10 @@ export class ConfigurationEditorComponent implements OnInit, OnDestroy {
         this.selectorQuery.moveSelected([0, -5 / scale]);
         break;
       case 'ArrowRight':
-        this.selectorQuery.moveSelected([1 / scale, 0]);
+        this.selectorQuery.moveSelected([5 / scale, 0]);
         break;
       case 'ArrowDown':
-        this.selectorQuery.moveSelected([0, 1 / scale]);
+        this.selectorQuery.moveSelected([0, 5 / scale]);
         break;
     }
   }
