@@ -5,7 +5,7 @@ import * as config from '../../config.json';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.less']
+  styleUrls: ['./app.component.less'],
 })
 export class AppComponent {
   public editorSrv: ConfigurationEditorService;
@@ -17,7 +17,7 @@ export class AppComponent {
       left: config.editorTransform.transform.x,
       top: config.editorTransform.transform.y,
       scale: config.editorTransform.transform.scale,
-      items: config.editorData.reduce((obj, item) => ({ ...obj, [item.id]: item }), {})
+      items: config.editorData.reduce((obj, item) => ({ ...obj, [item.id]: item }), {}),
     };
   }
 
@@ -48,14 +48,10 @@ export class AppComponent {
           styleProps: {
             ...item.styleProps,
             style: { ...item.styleProps.style, height: 15 },
-            transform: { ...item.styleProps.transform, position: { x: 30, y: 0 } }
-          }
-        }
+            transform: { ...item.styleProps.transform, position: { x: 30, y: 0 } },
+          },
+        },
       });
     }
-  }
-
-  log(obj: any) {
-    console.log(obj);
   }
 }

@@ -12,6 +12,7 @@
   [ceSelectorDisabled]="selectorDisabled"
   (ceSelectorMoving)="showSelector($event)"
   (ceSelectorEnd)="showSelector(null)"
+  (keydown)="keydown($event)"
 >
   <ce-no-zoom-area>
     <ce-grid></ce-grid>

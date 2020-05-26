@@ -10,7 +10,7 @@ import {
   OnDestroy,
   OnInit,
   Output,
-  ViewChild
+  ViewChild,
 } from '@angular/core';
 import { applyTransaction } from '@datorama/akita';
 import { Observable } from 'rxjs';
@@ -29,7 +29,7 @@ import { UtilsService } from './services/utils.service';
   selector: 'ce-configuration-editor',
   templateUrl: './configuration-editor.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [EditorStoreQuery, EditorStore, CoordinatesService, SelectorStore, SelectorQueryService, ConfigurationEditorService, UtilsService]
+  providers: [EditorStoreQuery, EditorStore, CoordinatesService, SelectorStore, SelectorQueryService, ConfigurationEditorService, UtilsService],
 })
 export class ConfigurationEditorComponent implements OnInit, OnDestroy {
   @Input('ceConfig')
@@ -52,7 +52,6 @@ export class ConfigurationEditorComponent implements OnInit, OnDestroy {
 
   private _viewConfig: Partial<IEditorState>;
   private dragStartPoints: [number, number] | null = null;
-  private;
 
   constructor(
     public cdr: ChangeDetectorRef,
@@ -63,7 +62,7 @@ export class ConfigurationEditorComponent implements OnInit, OnDestroy {
     private store: EditorStore,
     private coordinatesSrv: CoordinatesService
   ) {
-    this.items$ = this.editorQuery.items$.pipe(map(items => Object.values(items)));
+    this.items$ = this.editorQuery.items$.pipe(map((items) => Object.values(items)));
   }
 
   ngOnInit() {
@@ -146,5 +145,23 @@ export class ConfigurationEditorComponent implements OnInit, OnDestroy {
       this.editorSrv.clearSelector();
     });
     this.editorSrv.events$.next({ type: 'context', event, itemIds: null });
+  }
+
+  keydown(event: KeyboardEvent) {
+    const { scale } = this.editorQuery.getValue();
+    switch (event.code) {
+      case 'ArrowLeft':
+        this.selectorQuery.moveSelected([-5 / scale, 0]);
+        break;
+      case 'ArrowUp':
+        this.selectorQuery.moveSelected([0, -5 / scale]);
+        break;
+      case 'ArrowRight':
+        this.selectorQuery.moveSelected([1 / scale, 0]);
+        break;
+      case 'ArrowDown':
+        this.selectorQuery.moveSelected([0, 1 / scale]);
+        break;
+    }
   }
 }
