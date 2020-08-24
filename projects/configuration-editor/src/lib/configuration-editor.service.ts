@@ -221,7 +221,6 @@ export class ConfigurationEditorService {
             ...children.styleProps,
             style: {
               ...children.styleProps.style,
-              zIndex: zIndex + index,
               width: multiply(itemWidth, divide(childWidth, 100)),
               height: multiply(itemHeight, divide(childHeight, 100)),
             },
