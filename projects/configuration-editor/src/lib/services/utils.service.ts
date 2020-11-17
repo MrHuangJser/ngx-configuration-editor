@@ -23,7 +23,7 @@ export class UtilsService {
   getItemRects(ids: string[]) {
     const { scale, width, height } = this.editorStore.getValue();
     const { items } = this.editorStore.getValue();
-    return ids.map<Partial<DOMRect>>(id => {
+    return ids.map<Partial<DOMRect>>((id) => {
       const item = items[id];
       const itemDOM = document.querySelector(`[ce-item-id="${id}"]`);
       if (!item || !itemDOM) {
@@ -36,7 +36,7 @@ export class UtilsService {
         left: isRotate ? left : multiply(divide(item.styleProps.transform.position.x, 100), width),
         top: isRotate ? top : multiply(divide(item.styleProps.transform.position.y, 100), height),
         width: isRotate ? divide(itemRect.width, scale) : (item.styleProps.style.width / 100) * width,
-        height: isRotate ? divide(itemRect.height, scale) : (item.styleProps.style.height / 100) * height
+        height: isRotate ? divide(itemRect.height, scale) : (item.styleProps.style.height / 100) * height,
       };
     });
   }
@@ -46,13 +46,13 @@ export class UtilsService {
     if (selectedRects.includes(null)) {
       return null;
     }
-    const left = Math.min(...selectedRects.map(rect => rect && rect.left));
-    const top = Math.min(...selectedRects.map(rect => rect && rect.top));
+    const left = Math.min(...selectedRects.map((rect) => rect && rect.left));
+    const top = Math.min(...selectedRects.map((rect) => rect && rect.top));
     return {
       left,
       top,
-      width: Math.max(...selectedRects.map(rect => rect.left + rect.width)) - left,
-      height: Math.max(...selectedRects.map(rect => rect.top + rect.height)) - top
+      width: Math.max(...selectedRects.map((rect) => rect.left + rect.width)) - left,
+      height: Math.max(...selectedRects.map((rect) => rect.top + rect.height)) - top,
     };
   }
 
@@ -67,7 +67,7 @@ export class UtilsService {
       left: multiply(divide(left, canvasWidth), 100),
       top: multiply(divide(top, canvasHeight), 100),
       width: multiply(divide(width, canvasWidth), 100),
-      height: multiply(divide(height, canvasHeight), 100)
+      height: multiply(divide(height, canvasHeight), 100),
     };
   }
 
@@ -94,16 +94,16 @@ export class UtilsService {
               ...item.styleProps,
               style: {
                 ...item.styleProps.style,
-                width: multiply(widthPercent, newSelectorWidth)
+                width: multiply(widthPercent, newSelectorWidth),
               },
               transform: {
                 ...item.styleProps.transform,
                 position: {
                   ...item.styleProps.transform.position,
-                  x: add(multiply(newSelectorWidth, leftPercent), left)
-                }
-              }
-            }
+                  x: add(multiply(newSelectorWidth, leftPercent), left),
+                },
+              },
+            },
           };
           break;
         case 'n':
@@ -114,16 +114,16 @@ export class UtilsService {
               ...item.styleProps,
               style: {
                 ...item.styleProps.style,
-                height: multiply(heightPercent, newSelectorHeight)
+                height: multiply(heightPercent, newSelectorHeight),
               },
               transform: {
                 ...item.styleProps.transform,
                 position: {
                   ...item.styleProps.transform.position,
-                  y: add(add(multiply(newSelectorHeight, topPercent), top), my)
-                }
-              }
-            }
+                  y: add(add(multiply(newSelectorHeight, topPercent), top), my),
+                },
+              },
+            },
           };
           break;
         case 's':
@@ -134,16 +134,16 @@ export class UtilsService {
               ...item.styleProps,
               style: {
                 ...item.styleProps.style,
-                height: multiply(heightPercent, newSelectorHeight)
+                height: multiply(heightPercent, newSelectorHeight),
               },
               transform: {
                 ...item.styleProps.transform,
                 position: {
                   ...item.styleProps.transform.position,
-                  y: add(multiply(newSelectorHeight, topPercent), top)
-                }
-              }
-            }
+                  y: add(multiply(newSelectorHeight, topPercent), top),
+                },
+              },
+            },
           };
           break;
         case 'w':
@@ -154,16 +154,16 @@ export class UtilsService {
               ...item.styleProps,
               style: {
                 ...item.styleProps.style,
-                width: multiply(widthPercent, newSelectorWidth)
+                width: multiply(widthPercent, newSelectorWidth),
               },
               transform: {
                 ...item.styleProps.transform,
                 position: {
                   ...item.styleProps.transform.position,
-                  x: add(add(multiply(newSelectorWidth, leftPercent), left), mx)
-                }
-              }
-            }
+                  x: add(add(multiply(newSelectorWidth, leftPercent), left), mx),
+                },
+              },
+            },
           };
           break;
       }
@@ -174,17 +174,17 @@ export class UtilsService {
   getAlignMoveStateFromDirection(direction: string, ids: string[]) {
     const itemsStateMap: { [id: string]: { x?: number; y?: number } } = {};
     const itemsRect = this.getItemRects(ids);
-    const minX = Math.min(...itemsRect.map(rect => rect.left));
-    const minY = Math.min(...itemsRect.map(rect => rect.top));
-    const maxX = Math.max(...itemsRect.map(rect => rect.left + rect.width));
-    const maxY = Math.max(...itemsRect.map(rect => rect.top + rect.height));
+    const minX = Math.min(...itemsRect.map((rect) => rect.left));
+    const minY = Math.min(...itemsRect.map((rect) => rect.top));
+    const maxX = Math.max(...itemsRect.map((rect) => rect.left + rect.width));
+    const maxY = Math.max(...itemsRect.map((rect) => rect.top + rect.height));
     const middleX = (maxX - minX) / 2 + minX;
     const middleY = (maxY - minY) / 2 + minY;
     ids.forEach((id, index) => {
       const rect = itemsRect[index];
       switch (direction) {
         case 'left':
-          itemsStateMap[id].x = minX;
+          itemsStateMap[id] = { x: minX };
           break;
         case 'top':
           itemsStateMap[id] = { y: minY };
@@ -270,26 +270,26 @@ export class UtilsService {
         style: {
           ...item.styleProps.style,
           width: itemWidth,
-          height: itemHeight
+          height: itemHeight,
         },
         transform: {
           ...item.styleProps.transform,
           position: {
             x: itemLeft,
-            y: itemTop
-          }
-        }
-      }
+            y: itemTop,
+          },
+        },
+      },
     };
   }
 
   mapItemChildren(list: ItemFormData[], parentWidth: number, parentHeight: number): ItemFormData[] {
-    return list.map<ItemFormData>(item => this.setItemPercent(item, parentWidth, parentHeight));
+    return list.map<ItemFormData>((item) => this.setItemPercent(item, parentWidth, parentHeight));
   }
 
   convertItemsToPercent(items: { [id: string]: ItemFormData }, width: number, height: number): { [id: string]: ItemFormData } {
     const newItems: { [id: string]: ItemFormData } = {};
-    Object.values(items).forEach(item => {
+    Object.values(items).forEach((item) => {
       newItems[item.id] = { ...this.setItemPercent(item, width, height) };
     });
     return newItems;
